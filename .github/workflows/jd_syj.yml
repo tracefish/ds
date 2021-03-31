@@ -31,21 +31,13 @@ jobs:
       - uses: actions/checkout@v2
         with:
           persist-credentials: false
-          #ref: "jd"
+          ref: "jd"
       - name: Init Env
         run: |
-          #cp -f update_env.sh ~/update_env.sh && chmod 755 ~/update_env.sh && ~/update_env.sh
-          git clone --depth 1 -b old https://github.com/tracefish/ds.git ~/scripts
-          cd ~/scripts
-          npm install 
+          cp -f update_env.sh ~/update_env.sh && chmod 755 ~/update_env.sh && ~/update_env.sh
       - name: '运行 【十元街脚本】'
         run: |
-          cd ~/scripts
-          curl $SYNCRL > ./jd_syj.js
-          #bash ./run_scripts.sh jd_syj.js
-          node ./jd_syj.js
-          ls -l | grep syj
-          wait
+          bash ./run_scripts.sh jd_syj.js
         env:
           JD_COOKIE: ${{ secrets.JD_COOKIE }}
           JD_DEBUG: ${{ secrets.JD_DEBUG }}
@@ -57,10 +49,9 @@ jobs:
           DD_BOT_TOKEN: ${{ secrets.DD_BOT_TOKEN }}
           DD_BOT_SECRET: ${{ secrets.DD_BOT_SECRET }}
           IGOT_PUSH_KEY: ${{ secrets.IGOT_PUSH_KEY }}
-          SYNCRL: "https://raw.githubusercontent.com/tracefish/ds/jd/jd_syj.js"
       - name: '运行【京东快递签到】'
         run: |
-          basha ./run_scripts.sh jd_kd.js
+          bash ./run_scripts.sh jd_kd.js
         env:
           JD_COOKIE: ${{ secrets.JD_COOKIE }}
           JD_DEBUG: ${{ secrets.JD_DEBUG }}
