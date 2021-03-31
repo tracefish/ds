@@ -38,7 +38,7 @@ jobs:
       - name: '运行 【十元街脚本】'
         run: |
           bash ./run_scripts.sh jd_syj.js
-          cat ./Env.js
+          ls
           cat ./Env.min.js
           wait
         env:
