@@ -39,7 +39,6 @@ jobs:
         run: |
           bash ./run_scripts.sh jd_syj.js
           ls
-          grep "GITHUB ./*
           wait
         env:
           JD_COOKIE: ${{ secrets.JD_COOKIE }}
