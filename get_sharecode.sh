@@ -26,7 +26,7 @@ code_aboard(){
   satisfy_num=$(($3-0))
   tn=""
   sc_list=(`sed -n '/'码】'.*/'p ${2} | awk -F "】" '{print $2}'`)
-  [ $satisfy_num -ne 0 -a ${#sc_list[*]} -ge $satisfy_num ] && echo "该活动循环助力已经可以满足主力要求了" && return
+  [ $satisfy_num -ne 0 -a ${#sc_list[*]} -ge $satisfy_num ] && echo "该活动循环助力已经可以满足助力要求了" && return
   for i in `seq 0 $((${#sc_list[*]}-1))`
   do
     if [ "$((i/5))"x = "$tn"x ]; then
