@@ -68,8 +68,13 @@ if [ -n "$JD_COOKIES" ]; then
 fi
 
 echo "DECODE"
-encode_str=`cat ./$1 | grep "window" | awk -F "window" '{print($1)}'| awk -F "var " '{print $(NF-1)}' | awk -F "=" '{print $1}'`
-[ -n "$encode_str" ] && sed -i "s/return $encode_str/if($encode_str.toLowerCase()==\"github\"){$encode_str=\"GOGOGO\"};return $encode_str/g" ./$1
+encode_str=(`cat ./$1 | grep "window" | awk -F "window" '{print($1)}'| awk -F "var " '{print $(NF-1)}' | awk -F "=" '{print $1}' | sort -u`)
+if [ -n "$encode_str" ]; then
+    for ec in ${encode_str[*]}
+    do
+        sed -i "s/return $ec/if($ec.toLowerCase()==\"github\"){$ec=\"GOGOGOGO\"};return $ec/g" ./$1
+    done
+fi
 
 echo "开始运行"
 (node ./$1 | grep -Ev "pt_pin|pt_key") >&1 | tee ${LOG}
