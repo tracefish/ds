@@ -57,10 +57,10 @@ if [ -n "$SYNCURL" ]; then
     sed -i "s/indexOf('GITHUB')/indexOf('GOGOGOGO')/g" `ls -l |grep -v ^d|awk '{print $9}'`
     sed -i 's/indexOf("GITHUB")/indexOf("GOGOGOGO")/g' `ls -l |grep -v ^d|awk '{print $9}'`
 fi
+[ ! -e "./$1" ] && echo "脚本不存在" && exit 0
+
 echo "替换助力码"
 [ -e "${logDir}/${SCRIPT_NAME}.log" ] && autoHelp "${1}" "${logDir}/${SCRIPT_NAME}.log"
-
-[ ! -e "./$1" ] && echo "脚本不存在" && exit 0
 # 支持并行的cookie
 if [ -n "$JD_COOKIES" ]; then
   echo "修改cookie"
