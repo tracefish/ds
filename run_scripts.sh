@@ -60,15 +60,19 @@ fi
 echo "替换助力码"
 [ -e "${logDir}/${SCRIPT_NAME}.log" ] && autoHelp "${1}" "${logDir}/${SCRIPT_NAME}.log"
 
-[ ! -e "$1" ] && echo "脚本不存在" && exit 0
+[ ! -e "./$1" ] && echo "脚本不存在" && exit 0
 # 支持并行的cookie
 if [ -n "$JD_COOKIES" ]; then
   echo "修改cookie"
   sed -i 's/process.env.JD_COOKIE/process.env.JD_COOKIES/g' ./jdCookie.js
 fi
 
+echo "DECODE"
+encode_str=`cat ./$1 | grep "window" | awk -F "window" '{print($1)}'| awk -F "var " '{print $(NF-1)}' | awk -F "=" '{print $1}'`
+[ -n "$encode_str" ] && sed -i "s/return $encode_str/if($encode_str.toLowerCase()==\"github\"){$encode_str=\"GOGOGO\"};return $encode_str/g" ./$1
+
 echo "开始运行"
-(node $1 | grep -Ev "pt_pin|pt_key") >&1 | tee ${LOG}
+(node ./$1 | grep -Ev "pt_pin|pt_key") >&1 | tee ${LOG}
 
 # 收集助力码
 collectSharecode(){
