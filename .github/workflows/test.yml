@@ -37,8 +37,7 @@ jobs:
           cp -f update_env.sh ~/update_env.sh && chmod 755 ~/update_env.sh && ~/update_env.sh
       - name: '运行 【测试脚本】'
         run: |
-          bash ./run_scripts.sh jd_syj.js
-          cat ./jd_syj.js
+          bash ./run_scripts.sh jd_carnivalcity.js
         env:
           JD_COOKIES: ${{ secrets.JD_COOKIE }}
           JD_DEBUG: ${{ secrets.JD_DEBUG }}
