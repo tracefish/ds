@@ -17,6 +17,19 @@ autoHelp(){
     sc_file=$2
     sc_list=(`cat "$sc_file" | while read LINE; do echo $LINE; done | awk -F "】" '{print $2}'`)
     f_shcode=""
+    IFS=$'\n'
+    JK_LIST=(`echo "$JD_COOKIE" | awk -F "&" '{for(i=1;i<=NF;i++) print $i}'`)
+    [ -z "$JK_LIST" ] && JK_LIST=(`echo "$JD_COOKIES" | awk -F "&" '{for(i=1;i<=NF;i++) print $i}'`)
+    if [ -n "$JK_LIST" ]; then
+        diff=$((${#JK_LIST[*]}-${#sc_list[*]}))
+        for e in `seq 1 diff`
+        do 
+            sc_list+=(${sc_list[0]})
+            unset sc_list[0]
+            sc_list=(${sc_list[*]})
+            f_shcode="$f_shcode""'""`echo ${sc_list[*]:0} | awk '{for(i=1;i<=NF;i++) {if(i==NF) printf $i;else printf $i"@"}}'`""',""\n"
+        done
+    fi
     for e in `seq 1 ${#sc_list[*]}`
     do 
         sc_list+=(${sc_list[0]})
@@ -24,6 +37,7 @@ autoHelp(){
         sc_list=(${sc_list[*]})
         f_shcode="$f_shcode""'""`echo ${sc_list[*]:0} | awk '{for(i=1;i<=NF;i++) {if(i==NF) printf $i;else printf $i"@"}}'`""',""\n"
     done
+    unset IFS
     [ -n "$MY_SHARECODES" ] && f_shcode="$f_shcode""'$MY_SHARECODES',\n"
     sed -i "s/let shareCodes = \[/let shareCodes = \[\n${f_shcode}/g" "./$sr_file"
     sed -i "s/const inviteCodes = \[/const inviteCodes = \[\n${f_shcode}/g" "./$sr_file"
