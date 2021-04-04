@@ -38,7 +38,7 @@ jobs:
       - name: '运行 【测试脚本】'
         run: |
           #bash ./run_scripts.sh jd_carnivalcity.js
-          node ./jd_joy_reward.js
+          node jd_joy_reward.js
         env:
           JD_COOKIES: ${{ secrets.JD_COOKIE }}
           JDCOOKIE: ${{ secrets.JD_COOKIE }}
