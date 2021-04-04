@@ -22,7 +22,7 @@ autoHelp(){
     [ -z "$JK_LIST" ] && JK_LIST=(`echo "$JD_COOKIES" | awk -F "&" '{for(i=1;i<=NF;i++) print $i}'`)
     if [ -n "$JK_LIST" ]; then
         diff=$((${#JK_LIST[*]}-${#sc_list[*]}))
-        for e in `seq 1 diff`
+        for e in `seq 1 $diff`
         do 
             sc_list+=(${sc_list[0]})
             unset sc_list[0]
