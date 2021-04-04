@@ -38,7 +38,8 @@ jobs:
       - name: '运行 【测试脚本】'
         run: |
           #bash ./run_scripts.sh jd_carnivalcity.js
-          echo "$JD_COOKIES" | grep "&"
+          a=`echo "$JD_COOKIES" | grep "&"`
+          echo "$a"
         env:
           JD_COOKIES: ${{ secrets.JD_COOKIE }}
           JD_DEBUG: ${{ secrets.JD_DEBUG }}
