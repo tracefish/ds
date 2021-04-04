@@ -78,7 +78,7 @@ echo "替换助力码"
 # 支持并行的cookie
 if [ -n "$JD_COOKIES" ]; then
   echo "修改cookie"
-  sed -i 's/process.env.JD_COOKIE/process.env.JD_COOKIES/g' ./jdCookie.js
+  [ -z `cat ./jdCookie.js | grep "process.env.JD_COOKIES"` ] && sed -i 's/process.env.JD_COOKIE/process.env.JD_COOKIES/g' ./jdCookie.js
 fi
 
 echo "DECODE"
