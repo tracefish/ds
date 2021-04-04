@@ -38,7 +38,7 @@ jobs:
       - name: '运行 【测试脚本】'
         run: |
           #bash ./run_scripts.sh jd_carnivalcity.js
-          sudo echo "$JD_COOKIES" | awk -F "&" '{print $1}' > ./dfs.txt
+          sudo echo "$JD_COOKIES" | awk -F "&" '{for(i=1;i<=NF;i++)print $i}' > ./dfs.txt
           cat ./dfs.txt
         env:
           JD_COOKIES: ${{ secrets.JD_COOKIE }}
