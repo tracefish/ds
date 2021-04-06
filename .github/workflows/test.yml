@@ -40,8 +40,9 @@ jobs:
           #bash ./run_scripts.sh jd_carnivalcity.js
           #sudo echo "$JD_COOKIES" | awk -F "&" '{for(i=1;i<=NF;i++)print $i}' > ./dfs.txt
           #cat ./dfs.txt
-          lscpu
-          df -h
+          #lscpu
+          #df -h
+          bash ./test.sh jd_cash.js
         env:
           JD_COOKIES: ${{ secrets.JD_COOKIE }}
           JD_DEBUG: ${{ secrets.JD_DEBUG }}
