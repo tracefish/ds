@@ -7,6 +7,11 @@ SCRIPT="$1"
 DELAY="$2"
 LOG="${SCRIPT_NAME}.log"
 SCRIPT_NAME=`echo "${1}" | awk -F "." '{print $1}'`
+logDir=".."
+
+REPO_URL="https://github.com/tracefish/ds"
+REPO_BRANCH="sc"
+[ ! -d ~/ds ] && git clone -b "$REPO_BRANCH" $REPO_URL ~/ds
 
 cd ~/scripts
 
@@ -71,10 +76,10 @@ autoHelp(){
     jk_ordr=$3
     f_shcode=""
     
-    [ ! -e "$sc_file" -a -z "$MY_SHARECODES"] && return 0
+    [ ! -e "$sc_file" -a -z "$MY_SHARECODES" ] && return 0
     [ -n "$MY_SHARECODES" ] && f_shcode="$f_shcode""'$MY_SHARECODES',\n"
     
-    f_shcode="$f_shcode""'""`cat $sc_file | head -n "$jk_ordr" | tail -n -1`"',""\n"
+    f_shcode="$f_shcode""'""`cat $sc_file | head -n $jk_ordr | tail -n -1`""',""\n"
     
     sed -i "s/let shareCodes = \[/let shareCodes = \[\n${f_shcode}/g" "./$sr_file"
     sed -i "s/const inviteCodes = \[/const inviteCodes = \[\n${f_shcode}/g" "./$sr_file"
@@ -124,30 +129,30 @@ collectSharecode(){
 echo "开始多账号并发"
 IFS=$'\n'
 
-format_sc2txt "${logDir}/${SCRIPT_NAME}.log" "${logDir}/${SCRIPT_NAME}.conf"
+format_sc2txt "${logDir}/ds/${SCRIPT_NAME}.log" "${logDir}/${SCRIPT_NAME}.conf"
 
 echo "修改cookie"
 sed -i 's/process.env.JD_COOKIE/process.env.JD_COOKIES/g' ./jdCookie.js
 JK_LIST=(`echo "$JD_COOKIE" | awk -F "&" '{for(i=1;i<=NF;i++) print $i}'`)
 
-num=0
+num=1
 for jk in ${JK_LIST[*]}
 do
-  cp  -rf ~/scripts ~/scripts${num}
-  cd ~/scripts${num}
-  sed -i 's/let CookieJDs/let CookieJDss/g' ./jdCookie.js
-  sed -i "1i\let CookieJDs = [ '$jk', ]" ./jdCookie.js
-  autoHelp "$1" "${logDir}/${SCRIPT_NAME}.conf" $((num + 1))
-  ((node ./${SCRIPT} | grep -Ev "pt_pin|pt_key") >>&1 | tee "./${LOG}" && collectSharecode ./${LOG} $((num + 1)))&
-  cd ~
-  # 随机延迟5-12秒
-  random_time=$(($RANDOM%12+5))
-  delay=${DELAY:-$random_time}
-  echo "随机延迟${delay}秒"
-  sleep ${delay}s
-  num=$((num + 1))
+    cp  -rf ~/scripts ~/scripts${num}
+    cd ~/scripts${num}
+    sed -i 's/let CookieJDs/let CookieJDss/g' ./jdCookie.js
+    sed -i "1i\let CookieJDs = [ '$jk', ]" ./jdCookie.js
+    autoHelp "$1" "~/${SCRIPT_NAME}.conf" $num
+    ((node ./${SCRIPT} | grep -Ev "pt_pin|pt_key") >&1 | tee "./${LOG}"; collectSharecode "${logDir}/${SCRIPT_NAME}.conf" $num) &
+    cd ~
+    # 随机延迟5-12秒
+    random_time=$(($RANDOM%12+5))
+    delay=${DELAY:-$random_time}
+    echo "随机延迟${delay}秒"
+    sleep ${delay}s
+    num=$((num + 1))
 done
-echo "有账号" "${num}"
+echo "有账号" "$((num-1))"
 unset IFS
 
 wait
