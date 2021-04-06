@@ -5,6 +5,7 @@
 set -e
 SCRIPT="$1"
 DELAY="$2"
+LOG="./${SCRIPT_NAME}.log"
 
 cd ~/scripts
 
