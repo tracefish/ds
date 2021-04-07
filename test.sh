@@ -10,7 +10,7 @@ SCRIPT_NAME=`echo "${1}" | awk -F "." '{print $1}'`
 LOG="${SCRIPT_NAME}.log"
 SCRIPT_NAME=`echo "${1}" | awk -F "." '{print $1}'`
 logDir=".."
-
+notify_log="dt.conf"
 REPO_URL="https://github.com/tracefish/ds"
 REPO_BRANCH="sc"
 [ ! -d ~/ds ] && git clone -b "$REPO_BRANCH" $REPO_URL ~/ds
@@ -25,6 +25,10 @@ if [ -n "$SYNCURL" ]; then
     sed -i 's/indexOf("GITHUB")/indexOf("GOGOGOGO")/g' `ls -l |grep -v ^d|awk '{print $9}'`
 fi
 [ ! -e "./$1" ] && echo "脚本不存在" && exit 0
+
+echo "修改发送方式"
+sed -i "s/desp += author/\/\/desp += author/g" ./sendNotify.js
+sed -i "/text = text.match/a   var fs = require('fs');fs.appendFile(\"./\" + \"$notify_log\", text + \"\\\n\", function(err) {if(err) {return console.log(err);}});fs.appendFile(\"./\" + \"$notify_log\", desp + \"\\\n\", function(err) {if(err) {return console.log(err);}});\n  return" ./sendNotify.js
 
 echo "DECODE"
 encode_str=(`cat ./$1 | grep "window" | awk -F "window" '{print($1)}'| awk -F "var " '{print $(NF-1)}' | awk -F "=" '{print $1}' | sort -u`)
