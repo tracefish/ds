@@ -165,15 +165,27 @@ unset IFS
 
 wait
 
+#判断是否需要特别推送
+specify_send(){
+  ret=`cat $1 | grep "提醒\|已超时\|已可兑换"`
+  [ -n "$ret" ] && echo 1 || echo 0
+}
+
 for n in `seq 1 ${#JK_LIST[*]}`
 do
     cd ~/scripts${n}
     if [ "$i"x = "1"x ]; then
         [ -e "./${LOG}1" ] && cat ./${LOG}1  | sed "s/账号[0-9]/账号$n/g" > ~/${LOG}
-        [ -e "./${NOTIFY_CONF}" ] && cat ./${NOTIFY_CONF}  | tail -n +2 | sed "s/账号[0-9]/账号$n/g" > ~/${NOTIFY_CONF}
+        if [ -e "./${NOTIFY_CONF}" ]; then
+            echo "" >> ~/${NOTIFY_CONF}
+            [ $(specify_send ./${NOTIFY_CONF}) -eq 0] && cat ./${NOTIFY_CONF}  | tail -n +2 | sed "s/账号[0-9]/账号$n/g" > ~/${NOTIFY_CONF} || cat ./${NOTIFY_CONF}  | tail -n +2 | sed "s/账号[0-9]/账号$n/g" > ~/${NOTIFY_CONF}spec
+        fi
     else
         [ -e "./${LOG}1" ] && cat ./${LOG}1  | sed "s/账号[0-9]/账号$n/g" >> ~/${LOG}
-        [ -e "./${NOTIFY_CONF}" ] && echo "" >> ~/${NOTIFY_CONF} && cat ./${NOTIFY_CONF} | tail -n +2 | sed "s/账号[0-9]/账号$n/g" >> ~/${NOTIFY_CONF}
+        if [ -e "./${NOTIFY_CONF}" ]; then
+            echo "" >> ~/${NOTIFY_CONF}
+            [ $(specify_send ./${NOTIFY_CONF}) -eq 0] && cat ./${NOTIFY_CONF}  | tail -n +2 | sed "s/账号[0-9]/账号$n/g" >> ~/${NOTIFY_CONF} || cat ./${NOTIFY_CONF}  | tail -n +2 | sed "s/账号[0-9]/账号$n/g" >> ~/${NOTIFY_CONF}spec
+        fi
     fi
     [ -e "./${NOTIFY_CONF}" -a ! -e "~/${NOTIFY_CONF}name" ] && cat ./${NOTIFY_CONF} | head -n 1 > ~/${NOTIFY_CONF}name 
 done
@@ -181,6 +193,13 @@ done
 cd ~/scripts
 echo "推送消息"
 if [ -e ~/${NOTIFY_CONF} ]; then
+    #清除文首文末空行
+    sed -i "s/text = text.match/\/\/text = text.match/g" ./sendNotify_diy.js
+    mv -f ./sendNotify_diy.js ./sendNotify.js
+    cat ~/${NOTIFY_CONF} && node ./run_sendNotify.js
+fi
+if [ -e ~/${NOTIFY_CONF}spec ]; then
+    #清除文首文末空行
     sed -i "s/text = text.match/\/\/text = text.match/g" ./sendNotify_diy.js
     mv -f ./sendNotify_diy.js ./sendNotify.js
     cat ~/${NOTIFY_CONF} && node ./run_sendNotify.js
