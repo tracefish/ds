@@ -181,13 +181,13 @@ do
         [ -e "./${LOG}1" ] && cat ./${LOG}1  | sed "s/账号[0-9]/账号$n/g" > ~/${LOG}
         if [ -e "./${NOTIFY_CONF}" ]; then
             echo "" >> ~/${NOTIFY_CONF}
-            [ $(specify_send ./${NOTIFY_CONF}) -eq 0] && cat ./${NOTIFY_CONF}  | tail -n +2 | sed "s/账号[0-9]/账号$n/g" > ~/${NOTIFY_CONF} || cat ./${NOTIFY_CONF}  | tail -n +2 | sed "s/账号[0-9]/账号$n/g" > ~/${NOTIFY_CONF}spec
+            [ $(specify_send ./${NOTIFY_CONF}) -eq 0 ] && cat ./${NOTIFY_CONF}  | tail -n +2 | sed "s/账号[0-9]/账号$n/g" > ~/${NOTIFY_CONF} || cat ./${NOTIFY_CONF}  | tail -n +2 | sed "s/账号[0-9]/账号$n/g" > ~/${NOTIFY_CONF}spec
         fi
     else
         [ -e "./${LOG}1" ] && cat ./${LOG}1  | sed "s/账号[0-9]/账号$n/g" >> ~/${LOG}
         if [ -e "./${NOTIFY_CONF}" ]; then
             echo "" >> ~/${NOTIFY_CONF}
-            [ $(specify_send ./${NOTIFY_CONF}) -eq 0] && cat ./${NOTIFY_CONF}  | tail -n +2 | sed "s/账号[0-9]/账号$n/g" >> ~/${NOTIFY_CONF} || cat ./${NOTIFY_CONF}  | tail -n +2 | sed "s/账号[0-9]/账号$n/g" >> ~/${NOTIFY_CONF}spec
+            [ $(specify_send ./${NOTIFY_CONF}) -eq 0 ] && cat ./${NOTIFY_CONF}  | tail -n +2 | sed "s/账号[0-9]/账号$n/g" >> ~/${NOTIFY_CONF} || cat ./${NOTIFY_CONF}  | tail -n +2 | sed "s/账号[0-9]/账号$n/g" >> ~/${NOTIFY_CONF}spec
         fi
     fi
     [ -e "./${NOTIFY_CONF}" -a ! -e "~/${NOTIFY_CONF}name" ] && cat ./${NOTIFY_CONF} | head -n 1 > ~/${NOTIFY_CONF}name 
