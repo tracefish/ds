@@ -5,7 +5,7 @@
 # DD_BOT_SECRET_SPEC：特别推送
 # DD_BOT_TOKEN_SPEC：特别推送
 
-set -e
+# set -e
 SCRIPT="$1"
 DELAY="$2"
 
@@ -179,13 +179,11 @@ do
     if [ "$i"x = "1"x ]; then
         [ -e "./${LOG}1" ] && cat ./${LOG}1  | sed "s/账号[0-9]/账号$n/g" > ~/${LOG}
         if [ -e "./${NOTIFY_CONF}" ]; then
-            echo "" >> ~/${NOTIFY_CONF}
             [ $(specify_send ./${NOTIFY_CONF}) -eq 0 ] && cat ./${NOTIFY_CONF}  | tail -n +2 | sed "s/账号[0-9]/账号$n/g" > ~/${NOTIFY_CONF} || cat ./${NOTIFY_CONF}  | tail -n +2 | sed "s/账号[0-9]/账号$n/g" > ~/${NOTIFY_CONF}spec
         fi
     else
         [ -e "./${LOG}1" ] && cat ./${LOG}1  | sed "s/账号[0-9]/账号$n/g" >> ~/${LOG}
         if [ -e "./${NOTIFY_CONF}" ]; then
-            echo "" >> ~/${NOTIFY_CONF}
             [ $(specify_send ./${NOTIFY_CONF}) -eq 0 ] && cat ./${NOTIFY_CONF}  | tail -n +2 | sed "s/账号[0-9]/账号$n/g" >> ~/${NOTIFY_CONF} || cat ./${NOTIFY_CONF}  | tail -n +2 | sed "s/账号[0-9]/账号$n/g" >> ~/${NOTIFY_CONF}spec
         fi
     fi
@@ -202,6 +200,8 @@ if [ -e ~/${NOTIFY_CONF} ]; then
     cp -f ./sendNotify_diy.js ./sendNotify.js
     sed -i "s/text = text.match/\/\/text = text.match/g" ./sendNotify.js
     node ./run_sendNotify.js
+    rm -f ./${NOTIFY_CONF}
+    rm -f ~/${NOTIFY_CONF}
 fi
 # 特殊推送
 if [ -e ~/${NOTIFY_CONF}spec ]; then
@@ -213,6 +213,7 @@ if [ -e ~/${NOTIFY_CONF}spec ]; then
     sed -i "s/process.env.DD_BOT_TOKEN/process.env.DD_BOT_TOKEN_SPEC/g" ./sendNotify.js
     sed -i "s/process.env.DD_BOT_SECRET/process.env.DD_BOT_SECRET_SPEC/g" ./sendNotify.js
     node ./run_sendNotify_spec.js
+    rm -f ~/${NOTIFY_CONF}spec
 fi
 # 恢复原文件
 cp -f ./sendNotify_diy.js ./sendNotify.js
