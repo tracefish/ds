@@ -3,6 +3,9 @@
 # 多账号并发,不定时
 # 变量：要运行的脚本$SCRIPT
 # 默认随机延迟5-12秒
+# DD_BOT_SECRET_SPEC：特别推送
+# DD_BOT_TOKEN_SPEC：特别推送
+
 set -e
 SCRIPT="$1"
 DELAY="$2"
@@ -192,18 +195,28 @@ done
 
 cd ~/scripts
 echo "推送消息"
+[ "$(cat ~/${NOTIFY_CONF}name | tail -n 1)"x = ""x ] && sed -i '$d' ~/${NOTIFY_CONF}name
 if [ -e ~/${NOTIFY_CONF} ]; then
     #清除文首文末空行
-    sed -i "s/text = text.match/\/\/text = text.match/g" ./sendNotify_diy.js
+    [ "$(cat ~/${NOTIFY_CONF} | head -n 1)"x = ""x ] && sed -i '1d' ~/${NOTIFY_CONF}
+    [ "$(cat ~/${NOTIFY_CONF} | tail -n 1)"x = ""x ] && sed -i '$d' ~/${NOTIFY_CONF}
     mv -f ./sendNotify_diy.js ./sendNotify.js
-    cat ~/${NOTIFY_CONF} && node ./run_sendNotify.js
+    sed -i "s/text = text.match/\/\/text = text.match/g" ./sendNotify.js
+    node ./run_sendNotify.js
 fi
+# 特殊推送
 if [ -e ~/${NOTIFY_CONF}spec ]; then
     #清除文首文末空行
-    sed -i "s/text = text.match/\/\/text = text.match/g" ./sendNotify_diy.js
+    [ "$(cat ~/${NOTIFY_CONF}spec | head -n 1)"x = ""x ] && sed -i '1d' ~/${NOTIFY_CONF}spec
+    [ "$(cat ~/${NOTIFY_CONF}spec | tail -n 1)"x = ""x ] && sed -i '$d' ~/${NOTIFY_CONF}spec
     mv -f ./sendNotify_diy.js ./sendNotify.js
-    cat ~/${NOTIFY_CONF} && node ./run_sendNotify.js
+    sed -i "s/text = text.match/\/\/text = text.match/g" ./sendNotify.js
+    sed -i "s/process.env.DD_BOT_TOKEN/process.env.DD_BOT_TOKEN_SPEC/g" ./sendNotify.js
+    sed -i "s/process.env.DD_BOT_SECRET/process.env.DD_BOT_SECRET_SPEC/g" ./sendNotify.js
+    node ./run_sendNotify_spec.js
 fi
+# 恢复原文件
+mv -f ./sendNotify_diy.js ./sendNotify.js
 
 [ ! -e ~/${LOG} ] && echo "退出脚本" && exit 0
 cat ~/${LOG}
