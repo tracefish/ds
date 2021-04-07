@@ -170,12 +170,12 @@ do
     cd ~/scripts${n}
     if [ "$i"x = "1"x ]; then
         cat ./${LOG}1  | sed "s/账号[0-9]/账号$n/g" > ~/${LOG}
-        [ -e "./${NOTIFY_CONF}" ] && cat ./${NOTIFY_CONF} | head -n 1 > ~/${NOTIFY_CONF}name 
         [ -e "./${NOTIFY_CONF}" ] && cat ./${NOTIFY_CONF}  | tail -n +2 | sed "s/账号[0-9]/账号$n/g" > ~/${NOTIFY_CONF}
     else
         cat ./${LOG}1  | sed "s/账号[0-9]/账号$n/g" >> ~/${LOG}
         [ -e "./${NOTIFY_CONF}" ] && cat ./${NOTIFY_CONF} | tail -n +2 | sed "s/账号[0-9]/账号$n/g" >> ~/${NOTIFY_CONF}
     fi
+    [ -e "./${NOTIFY_CONF}" -a ! -e "~/${NOTIFY_CONF}name" ] && cat ./${NOTIFY_CONF} | head -n 1 > ~/${NOTIFY_CONF}name 
 done
 
 cd ~/scripts
