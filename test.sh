@@ -28,11 +28,10 @@ fi
 [ ! -e "./$1" ] && echo "脚本不存在" && exit 0
 
 echo "修改发送方式"
-
-sed -i "s/text = text.match/\/\/text = text.match/g" ./sendNotify.js
 cp -f ./sendNotify.js ./sendNotify_diy.js
 sed -i "s/desp += author/\/\/desp += author/g" ./sendNotify.js
 sed -i "/text = text.match/a   var fs = require('fs');fs.appendFile(\"./\" + \"$NOTIFY_CONF\", text + \"\\\n\", function(err) {if(err) {return console.log(err);}});fs.appendFile(\"./\" + \"$NOTIFY_CONF\", desp + \"\\\n\", function(err) {if(err) {return console.log(err);}});\n  return" ./sendNotify.js
+sed -i "s/text = text.match/\/\/text = text.match/g" ./sendNotify_diy.js
 
 echo "DECODE"
 encode_str=(`cat ./$1 | grep "window" | awk -F "window" '{print($1)}'| awk -F "var " '{print $(NF-1)}' | awk -F "=" '{print $1}' | sort -u`)
