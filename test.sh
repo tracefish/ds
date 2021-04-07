@@ -4,7 +4,9 @@
 # 默认随机延迟5-12秒
 set -e
 SCRIPT="$1"
-DELAY="$2"
+DELAY=0
+
+SCRIPT_NAME=`echo "${1}" | awk -F "." '{print $1}'`
 LOG="${SCRIPT_NAME}.log"
 SCRIPT_NAME=`echo "${1}" | awk -F "." '{print $1}'`
 logDir=".."
@@ -41,16 +43,15 @@ format_sc2txt(){
     fsr_file=$2
     #${SCRIPT_NAME}.conf
     sc_list=(`cat "$sc_file" | while read LINE; do echo $LINE; done | awk -F "】" '{print $2}'`)
-    IFS=$'\n'
     for e in `seq 1 ${#sc_list[*]}`
     do 
         sc_list+=(${sc_list[0]})
         unset sc_list[0]
         sc_list=(${sc_list[*]})
         if [ $e -eq 1 ]; then
-            echo ${sc_list[*]:0} | awk '{for(i=1;i<=NF;i++) {if(i==NF) printf $i;else printf $i"@"}}' > $fsr_file
+            echo ${sc_list[*]:0}| awk '{for(i=1;i<=NF;i++) {if(i==NF) print $i;else printf $i"@"}}' > $fsr_file
         else
-            echo ${sc_list[*]:0} | awk '{for(i=1;i<=NF;i++) {if(i==NF) printf $i;else printf $i"@"}}' >> $fsr_file
+            echo ${sc_list[*]:0} | awk '{for(i=1;i<=NF;i++) {if(i==NF) print $i;else printf $i"@"}}' >> $fsr_file
         fi
     done
     JK_LIST=(`echo "$JD_COOKIE" | awk -F "&" '{for(i=1;i<=NF;i++) print $i}'`)
@@ -61,10 +62,9 @@ format_sc2txt(){
             sc_list+=(${sc_list[0]})
             unset sc_list[0]
             sc_list=(${sc_list[*]})
-            echo ${sc_list[*]:0} | awk '{for(i=1;i<=NF;i++) {if(i==NF) printf $i;else printf $i"@"}}' >> $fsr_file
+            echo ${sc_list[*]:0} | awk '{for(i=1;i<=NF;i++) {if(i==NF) print $i;else printf $i"@"}}' >> $fsr_file
         done
     fi
-    unset IFS
 }
 
 autoHelp(){
@@ -78,9 +78,7 @@ autoHelp(){
     
     [ ! -e "$sc_file" -a -z "$MY_SHARECODES" ] && return 0
     [ -n "$MY_SHARECODES" ] && f_shcode="$f_shcode""'$MY_SHARECODES',\n"
-    
     f_shcode="$f_shcode""'""`cat $sc_file | head -n $jk_ordr | tail -n -1`""',""\n"
-    
     sed -i "s/let shareCodes = \[/let shareCodes = \[\n${f_shcode}/g" "./$sr_file"
     sed -i "s/const inviteCodes = \[/const inviteCodes = \[\n${f_shcode}/g" "./$sr_file"
     sed -i "s/let inviteCodes = \[/let inviteCodes = \[\n${f_shcode}/g" "./$sr_file"
@@ -108,12 +106,11 @@ autoHelp(){
 
 # 收集助力码
 collectSharecode(){
-    #$2: jk位置
     echo "${1}：收集新助力码"
-    code=`sed -n '/'码】'.*/'p ${1} | grep -v "提交" | sed "s/ 账号[0-9]/账号$2/g"`
+    code=`sed -n '/'码】'.*/'p ${1} | grep -v "提交"`
     if [ -z "$code" ]; then
         activity=`sed -n '/配置文件.*/'p "./${LOG}" | awk -F "获取" '{print $2}' | awk -F "配置" '{print $1}'`
-        name=(`sed -n '/'【京东账号'.*/'p "./${LOG}" | grep "开始" | sed "s/ 账号[0-9]/账号$2/g" | awk -F "开始" '{print $2}' |sed 's/】/（/g'| awk -v ac="$activity" -F "*" '{print $1"）" ac "好友助力码】"}'`)
+        name=(`sed -n '/'【京东账号'.*/'p "./${LOG}" | grep "开始" | awk -F "开始" '{print $2}' |sed 's/】/（/g'| awk -v ac="$activity" -F "*" '{print $1"）" ac "好友助力码】"}'`)
         code=(`sed -n '/'您的好友助力码为'.*/'p ${1} | awk '{print $2}'`)
         [ -z "$code" ] && code=(`sed -n '/'好友助力码'.*/'p ${1} | awk -F "：" '{print $2}'`)
         [ -z "$code" ] && exit 0
@@ -135,51 +132,57 @@ echo "修改cookie"
 sed -i 's/process.env.JD_COOKIE/process.env.JD_COOKIES/g' ./jdCookie.js
 JK_LIST=(`echo "$JD_COOKIE" | awk -F "&" '{for(i=1;i<=NF;i++) print $i}'`)
 
-num=1
-for jk in ${JK_LIST[*]}
-do
+# 任务函数
+task(){
+    jk="$1"
+    num=$2
     cp  -rf ~/scripts ~/scripts${num}
     cd ~/scripts${num}
     sed -i 's/let CookieJDs/let CookieJDss/g' ./jdCookie.js
     sed -i "1i\let CookieJDs = [ '$jk', ]" ./jdCookie.js
-    autoHelp "$1" "~/${SCRIPT_NAME}.conf" $num
-    ((node ./${SCRIPT} | grep -Ev "pt_pin|pt_key") >&1 | tee "./${LOG}"; collectSharecode "${logDir}/${SCRIPT_NAME}.conf" $num) &
-    cd ~
+    autoHelp "$SCRIPT" "${logDir}/${SCRIPT_NAME}.conf" $num
+    (node ./${SCRIPT} | grep -Ev "pt_pin|pt_key") >&1 | tee "./${LOG}"
+    collectSharecode "./${LOG}"
+    cd -
     # 随机延迟5-12秒
     random_time=$(($RANDOM%12+5))
     delay=${DELAY:-$random_time}
     echo "随机延迟${delay}秒"
     sleep ${delay}s
-    num=$((num + 1))
+}
+
+for jkl in `seq 1 ${#JK_LIST[*]}`
+do
+    task ${JK_LIST[$((jkl-1))]} $jkl &
 done
-echo "有账号" "$((num-1))"
+echo "有账号" ${#JK_LIST[*]}
 unset IFS
 
 wait
 
-for n in `seq 1 $num`
+for n in `seq 1 ${#JK_LIST[*]}`
 do
-    cd ~/scripts${num}
-    [ "$i"x = "1"x ] && echo ./${LOG}1 > ~/${LOG} || echo ./${LOG}1 >> ~/${LOG}
+    cd ~/scripts${n}
+    [ "$i"x = "1"x ] && cat ./${LOG}1  | sed "s/账号[0-9]/账号$n/g" > ~/${LOG} || cat ./${LOG}1  | sed "s/账号[0-9]/账号$n/g" >> ~/${LOG}
 done
 
 cat ~/${LOG}
 
-[ ! -e "~/${LOG}" -o -z "$(cat ~/${LOG})" ] && echo "退出脚本" && exit 0
-echo "上传助力码文件"
-cd ~/ds
-echo "拉取最新源码"
-git config --global user.email "tracefish@qq.com"
-git config --global user.name "tracefish"
-git pull origin "$REPO_BRANCH:$REPO_BRANCH"
+# [ ! -e "~/${LOG}" -o -z "$(cat ~/${LOG})" ] && echo "退出脚本" && exit 0
+# echo "上传助力码文件"
+# cd ~/ds
+# echo "拉取最新源码"
+# git config --global user.email "tracefish@qq.com"
+# git config --global user.name "tracefish"
+# git pull origin "$REPO_BRANCH:$REPO_BRANCH"
 
-echo "Resetting origin to: https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY"
-sudo git remote set-url origin "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY"
+# echo "Resetting origin to: https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY"
+# sudo git remote set-url origin "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY"
 
-echo "强制覆盖原文件"
-mv -v ~/${LOG} ./${LOG}
-git add .
-git commit -m "update ${SCRIPT_NAME} `date +%Y%m%d%H%M%S`"
+# echo "强制覆盖原文件"
+# mv -v ~/${LOG} ./${LOG}
+# git add .
+# git commit -m "update ${SCRIPT_NAME} `date +%Y%m%d%H%M%S`"
 
-echo "Pushing changings from tmp_upstream to origin"
-sudo git push origin "$REPO_BRANCH:$REPO_BRANCH" --force
+# echo "Pushing changings from tmp_upstream to origin"
+# sudo git push origin "$REPO_BRANCH:$REPO_BRANCH" --force
