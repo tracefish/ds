@@ -31,7 +31,6 @@ echo "修改发送方式"
 cp -f ./sendNotify.js ./sendNotify_diy.js
 sed -i "s/desp += author/\/\/desp += author/g" ./sendNotify.js
 sed -i "/text = text.match/a   var fs = require('fs');fs.appendFile(\"./\" + \"$NOTIFY_CONF\", text + \"\\\n\", function(err) {if(err) {return console.log(err);}});fs.appendFile(\"./\" + \"$NOTIFY_CONF\", desp + \"\\\n\", function(err) {if(err) {return console.log(err);}});\n  return" ./sendNotify.js
-sed -i "s/text = text.match/\/\/text = text.match/g" ./sendNotify_diy.js
 
 echo "DECODE"
 encode_str=(`cat ./$1 | grep "window" | awk -F "window" '{print($1)}'| awk -F "var " '{print $(NF-1)}' | awk -F "=" '{print $1}' | sort -u`)
@@ -175,7 +174,7 @@ do
         [ -e "./${NOTIFY_CONF}" ] && cat ./${NOTIFY_CONF}  | tail -n +2 | sed "s/账号[0-9]/账号$n/g" > ~/${NOTIFY_CONF}
     else
         [ -e "./${LOG}1" ] && cat ./${LOG}1  | sed "s/账号[0-9]/账号$n/g" >> ~/${LOG}
-        [ -e "./${NOTIFY_CONF}" ] && cat ./${NOTIFY_CONF} | tail -n +2 | sed "s/账号[0-9]/账号$n/g" >> ~/${NOTIFY_CONF}
+        [ -e "./${NOTIFY_CONF}" ] && echo "" >> ~/${NOTIFY_CONF} && cat ./${NOTIFY_CONF} | tail -n +2 | sed "s/账号[0-9]/账号$n/g" >> ~/${NOTIFY_CONF}
     fi
     [ -e "./${NOTIFY_CONF}" -a ! -e "~/${NOTIFY_CONF}name" ] && cat ./${NOTIFY_CONF} | head -n 1 > ~/${NOTIFY_CONF}name 
 done
@@ -183,7 +182,11 @@ done
 cd ~/scripts
 cat ~/${NOTIFY_CONF}
 echo "推送消息"
-[ -e ~/${NOTIFY_CONF} ] && cat ~/${NOTIFY_CONF} && node ./run_sendNotify.js
+if [ -e ~/${NOTIFY_CONF} ]; then
+    sed -i "s/text = text.match/\/\/text = text.match/g" ./sendNotify_diy.js
+    mv -f ./sendNotify_diy.js ./sendNotify.js
+    cat ~/${NOTIFY_CONF} && node ./run_sendNotify.js
+fi
 
 [ ! -e ~/${LOG} ] && echo "退出脚本" && exit 0
 cat ~/${LOG}
