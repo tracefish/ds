@@ -5,7 +5,7 @@
 # 默认随机延迟5-12秒
 set -e
 SCRIPT="$1"
-DELAY=0
+DELAY="$2"
 
 SCRIPT_NAME=`echo "${1}" | awk -F "." '{print $1}'`
 LOG="${SCRIPT_NAME}.log"
