@@ -10,7 +10,7 @@ SCRIPT_NAME=`echo "${1}" | awk -F "." '{print $1}'`
 LOG="${SCRIPT_NAME}.log"
 SCRIPT_NAME=`echo "${1}" | awk -F "." '{print $1}'`
 logDir=".."
-notify_log="dt.conf"
+NOTIFY_CONF="dt.conf"
 REPO_URL="https://github.com/tracefish/ds"
 REPO_BRANCH="sc"
 [ ! -d ~/ds ] && git clone -b "$REPO_BRANCH" $REPO_URL ~/ds
@@ -29,7 +29,7 @@ fi
 echo "修改发送方式"
 cp -f ./sendNotify.js ./sendNotify_diy.js
 sed -i "s/desp += author/\/\/desp += author/g" ./sendNotify.js
-sed -i "/text = text.match/a   var fs = require('fs');fs.appendFile(\"./\" + \"$notify_log\", text + \"\\\n\", function(err) {if(err) {return console.log(err);}});fs.appendFile(\"./\" + \"$notify_log\", desp + \"\\\n\", function(err) {if(err) {return console.log(err);}});\n  return" ./sendNotify.js
+sed -i "/text = text.match/a   var fs = require('fs');fs.appendFile(\"./\" + \"$NOTIFY_CONF\", text + \"\\\n\", function(err) {if(err) {return console.log(err);}});fs.appendFile(\"./\" + \"$NOTIFY_CONF\", desp + \"\\\n\", function(err) {if(err) {return console.log(err);}});\n  return" ./sendNotify.js
 
 echo "DECODE"
 encode_str=(`cat ./$1 | grep "window" | awk -F "window" '{print($1)}'| awk -F "var " '{print $(NF-1)}' | awk -F "=" '{print $1}' | sort -u`)
@@ -168,26 +168,36 @@ wait
 for n in `seq 1 ${#JK_LIST[*]}`
 do
     cd ~/scripts${n}
-    [ "$i"x = "1"x ] && cat ./${LOG}1  | sed "s/账号[0-9]/账号$n/g" > ~/${LOG} || cat ./${LOG}1  | sed "s/账号[0-9]/账号$n/g" >> ~/${LOG}
+    if [ "$i"x = "1"x ]; then
+        cat ./${LOG}1  | sed "s/账号[0-9]/账号$n/g" > ~/${LOG}
+        cat ./${NOTIFY_CONF}  | head -n 1 > ~/${NOTIFY_CONF}name
+        cat ./${NOTIFY_CONF}  | tail -n +2 | sed "s/账号[0-9]/账号$n/g" > ~/${NOTIFY_CONF}
+    else
+        cat ./${LOG}1  | sed "s/账号[0-9]/账号$n/g" >> ~/${LOG}
+        cat ./${NOTIFY_CONF} | tail -n +2 | sed "s/账号[0-9]/账号$n/g" >> ~/${NOTIFY_CONF}
+    fi
 done
 
 cat ~/${LOG}
+cat ~/${NOTIFY_CONF}
+echo "推送消息"
+[ ! -e "~/${NOTIFY_CONF}" -o -z "$(cat ~/${NOTIFY_CONF})" ] && node ./run_sendNotify.js
 
-# [ ! -e "~/${LOG}" -o -z "$(cat ~/${LOG})" ] && echo "退出脚本" && exit 0
-# echo "上传助力码文件"
-# cd ~/ds
-# echo "拉取最新源码"
-# git config --global user.email "tracefish@qq.com"
-# git config --global user.name "tracefish"
-# git pull origin "$REPO_BRANCH:$REPO_BRANCH"
+[ ! -e "~/${LOG}" -o -z "$(cat ~/${LOG})" ] && echo "退出脚本" && exit 0
+echo "上传助力码文件"
+cd ~/ds
+echo "拉取最新源码"
+git config --global user.email "tracefish@qq.com"
+git config --global user.name "tracefish"
+git pull origin "$REPO_BRANCH:$REPO_BRANCH"
 
-# echo "Resetting origin to: https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY"
-# sudo git remote set-url origin "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY"
+echo "Resetting origin to: https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY"
+sudo git remote set-url origin "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY"
 
-# echo "强制覆盖原文件"
-# mv -v ~/${LOG} ./${LOG}
-# git add .
-# git commit -m "update ${SCRIPT_NAME} `date +%Y%m%d%H%M%S`"
+echo "强制覆盖原文件"
+mv -v ~/${LOG} ./${LOG}
+git add .
+git commit -m "update ${SCRIPT_NAME} `date +%Y%m%d%H%M%S`"
 
-# echo "Pushing changings from tmp_upstream to origin"
-# sudo git push origin "$REPO_BRANCH:$REPO_BRANCH" --force
+echo "Pushing changings from tmp_upstream to origin"
+sudo git push origin "$REPO_BRANCH:$REPO_BRANCH" --force
