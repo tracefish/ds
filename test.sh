@@ -180,7 +180,6 @@ do
 done
 
 cd ~/scripts
-cat ~/${NOTIFY_CONF}
 echo "推送消息"
 if [ -e ~/${NOTIFY_CONF} ]; then
     sed -i "s/text = text.match/\/\/text = text.match/g" ./sendNotify_diy.js
