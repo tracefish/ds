@@ -27,6 +27,7 @@ fi
 [ ! -e "./$1" ] && echo "脚本不存在" && exit 0
 
 echo "修改发送方式"
+cp -f ./sendNotify.js ./sendNotify_diy.js
 sed -i "s/desp += author/\/\/desp += author/g" ./sendNotify.js
 sed -i "/text = text.match/a   var fs = require('fs');fs.appendFile(\"./\" + \"$notify_log\", text + \"\\\n\", function(err) {if(err) {return console.log(err);}});fs.appendFile(\"./\" + \"$notify_log\", desp + \"\\\n\", function(err) {if(err) {return console.log(err);}});\n  return" ./sendNotify.js
 
