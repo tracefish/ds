@@ -83,8 +83,8 @@ autoHelp(){
     f_shcode=""
     
     [ ! -e "$sc_file" -a -z "$MY_SHARECODES" ] && return 0
+    f_shcode="$f_shcode""'""`cat $sc_file | head -n $jk_ordr | tail -n 1`""',""\n"
     [ -n "$MY_SHARECODES" ] && f_shcode="$f_shcode""'$MY_SHARECODES',\n"
-    f_shcode="$f_shcode""'""`cat $sc_file | head -n $jk_ordr | tail -n -1`""',""\n"
     sed -i "s/let shareCodes = \[/let shareCodes = \[\n${f_shcode}/g" "./$sr_file"
     sed -i "s/const inviteCodes = \[/const inviteCodes = \[\n${f_shcode}/g" "./$sr_file"
     sed -i "s/let inviteCodes = \[/let inviteCodes = \[\n${f_shcode}/g" "./$sr_file"
@@ -133,7 +133,6 @@ echo "开始多账号并发"
 IFS=$'\n'
 
 format_sc2txt "${logDir}/ds/${SCRIPT_NAME}.log" "${logDir}/${SCRIPT_NAME}.conf"
-
 echo "修改cookie"
 sed -i 's/process.env.JD_COOKIE/process.env.JD_COOKIES/g' ./jdCookie.js
 JK_LIST=(`echo "$JD_COOKIE" | awk -F "&" '{for(i=1;i<=NF;i++) print $i}'`)
@@ -202,7 +201,7 @@ sudo git remote set-url origin "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$
 echo "强制覆盖原文件"
 mv -v ~/${LOG} ./${LOG}
 git add .
-git commit -m "update ${SCRIPT_NAME} `date +%Y%m%d%H%M%S`"
+git commit -m "update ${SCRIPT_NAME} `date +%Y%m%d%H%M%S`" 2>/dev/null
 
 echo "Pushing changings from tmp_upstream to origin"
 sudo git push origin "$REPO_BRANCH:$REPO_BRANCH" --force
