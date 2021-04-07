@@ -180,6 +180,8 @@ done
 
 cat ~/${LOG}
 cat ~/${NOTIFY_CONF}
+
+cd ~/scripts
 echo "推送消息"
 [ ! -e "~/${NOTIFY_CONF}" -o -z "$(cat ~/${NOTIFY_CONF})" ] && node ./run_sendNotify.js
 
