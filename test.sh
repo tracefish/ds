@@ -170,22 +170,20 @@ do
     cd ~/scripts${n}
     if [ "$i"x = "1"x ]; then
         cat ./${LOG}1  | sed "s/账号[0-9]/账号$n/g" > ~/${LOG}
-        cat ./${NOTIFY_CONF}  | head -n 1 > ~/${NOTIFY_CONF}name
-        cat ./${NOTIFY_CONF}  | tail -n +2 | sed "s/账号[0-9]/账号$n/g" > ~/${NOTIFY_CONF}
+        [ -e "./${NOTIFY_CONF}" ] && cat ./${NOTIFY_CONF} | head -n 1 > ~/${NOTIFY_CONF}name 
+        [ -e "./${NOTIFY_CONF}" ] && cat ./${NOTIFY_CONF}  | tail -n +2 | sed "s/账号[0-9]/账号$n/g" > ~/${NOTIFY_CONF}
     else
         cat ./${LOG}1  | sed "s/账号[0-9]/账号$n/g" >> ~/${LOG}
-        cat ./${NOTIFY_CONF} | tail -n +2 | sed "s/账号[0-9]/账号$n/g" >> ~/${NOTIFY_CONF}
+        [ -e "./${NOTIFY_CONF}" ] && cat ./${NOTIFY_CONF} | tail -n +2 | sed "s/账号[0-9]/账号$n/g" >> ~/${NOTIFY_CONF}
     fi
 done
 
-cat ~/${LOG}
-cat ~/${NOTIFY_CONF}
-
 cd ~/scripts
-echo "推送消息"
-[ ! -e "~/${NOTIFY_CONF}" -o -z "$(cat ~/${NOTIFY_CONF})" ] && node ./run_sendNotify.js
 
-[ ! -e "~/${LOG}" -o -z "$(cat ~/${LOG})" ] && echo "退出脚本" && exit 0
+echo "推送消息"
+[ ! -e "~/${NOTIFY_CONF}" -o -z "$(cat ~/${NOTIFY_CONF})" ] && cat ~/${NOTIFY_CONF} && node ./run_sendNotify.js
+
+[ ! -e "~/${LOG}" -o -z "$(cat ~/${LOG})" ] && cat ~/${LOG} && echo "退出脚本" && exit 0
 echo "上传助力码文件"
 cd ~/ds
 echo "拉取最新源码"
