@@ -1,3 +1,4 @@
+  
 #!/bin/bash
 # 多账号并发,不定时
 # 变量：要运行的脚本$SCRIPT
@@ -27,6 +28,8 @@ fi
 [ ! -e "./$1" ] && echo "脚本不存在" && exit 0
 
 echo "修改发送方式"
+
+sed -i "s/text = text.match/\/\/text = text.match/g" ./sendNotify.js
 cp -f ./sendNotify.js ./sendNotify_diy.js
 sed -i "s/desp += author/\/\/desp += author/g" ./sendNotify.js
 sed -i "/text = text.match/a   var fs = require('fs');fs.appendFile(\"./\" + \"$NOTIFY_CONF\", text + \"\\\n\", function(err) {if(err) {return console.log(err);}});fs.appendFile(\"./\" + \"$NOTIFY_CONF\", desp + \"\\\n\", function(err) {if(err) {return console.log(err);}});\n  return" ./sendNotify.js
@@ -169,10 +172,10 @@ for n in `seq 1 ${#JK_LIST[*]}`
 do
     cd ~/scripts${n}
     if [ "$i"x = "1"x ]; then
-        cat ./${LOG}1  | sed "s/账号[0-9]/账号$n/g" > ~/${LOG}
+        [ -e "./${LOG}1" ] && cat ./${LOG}1  | sed "s/账号[0-9]/账号$n/g" > ~/${LOG}
         [ -e "./${NOTIFY_CONF}" ] && cat ./${NOTIFY_CONF}  | tail -n +2 | sed "s/账号[0-9]/账号$n/g" > ~/${NOTIFY_CONF}
     else
-        cat ./${LOG}1  | sed "s/账号[0-9]/账号$n/g" >> ~/${LOG}
+        [ -e "./${LOG}1" ] && cat ./${LOG}1  | sed "s/账号[0-9]/账号$n/g" >> ~/${LOG}
         [ -e "./${NOTIFY_CONF}" ] && cat ./${NOTIFY_CONF} | tail -n +2 | sed "s/账号[0-9]/账号$n/g" >> ~/${NOTIFY_CONF}
     fi
     [ -e "./${NOTIFY_CONF}" -a ! -e "~/${NOTIFY_CONF}name" ] && cat ./${NOTIFY_CONF} | head -n 1 > ~/${NOTIFY_CONF}name 
@@ -181,9 +184,9 @@ done
 cd ~/scripts
 
 echo "推送消息"
-[ ! -e "~/${NOTIFY_CONF}" -o -z "$(cat ~/${NOTIFY_CONF})" ] && cat ~/${NOTIFY_CONF} && node ./run_sendNotify.js
+[ -e "~/${NOTIFY_CONF}" -a ! -s "~/${NOTIFY_CONF}" ] && cat ~/${NOTIFY_CONF} && node ./run_sendNotify.js
 
-[ ! -e "~/${LOG}" -o -z "$(cat ~/${LOG})" ] && cat ~/${LOG} && echo "退出脚本" && exit 0
+[ ! -e "~/${LOG}" -o -z "$(cat ~/${LOG})" ] && echo "退出脚本" && exit 0 || cat ~/${LOG} 
 echo "上传助力码文件"
 cd ~/ds
 echo "拉取最新源码"
