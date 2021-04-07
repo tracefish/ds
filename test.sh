@@ -144,7 +144,7 @@ JK_LIST=(`echo "$JD_COOKIE" | awk -F "&" '{for(i=1;i<=NF;i++) print $i}'`)
 task(){
     jk="$1"
     num=$2
-    cp  -rf ~/scripts ~/scripts${num}
+    [ ! -d ~/scripts${num} ] && cp  -rf ~/scripts ~/scripts${num}
     cd ~/scripts${num}
     sed -i 's/let CookieJDs/let CookieJDss/g' ./jdCookie.js
     sed -i "1i\let CookieJDs = [ '$jk', ]" ./jdCookie.js
@@ -182,11 +182,12 @@ do
 done
 
 cd ~/scripts
-
+cat ~/${NOTIFY_CONF}
 echo "推送消息"
-[ -e "~/${NOTIFY_CONF}" -a ! -s "~/${NOTIFY_CONF}" ] && cat ~/${NOTIFY_CONF} && node ./run_sendNotify.js
+[ -e ~/${NOTIFY_CONF} ] && cat ~/${NOTIFY_CONF} && node ./run_sendNotify.js
 
-[ ! -e "~/${LOG}" -o -z "$(cat ~/${LOG})" ] && echo "退出脚本" && exit 0 || cat ~/${LOG} 
+[ ! -e ~/${LOG} ] && echo "退出脚本" && exit 0
+cat ~/${LOG}
 echo "上传助力码文件"
 cd ~/ds
 echo "拉取最新源码"
