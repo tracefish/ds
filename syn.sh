@@ -6,7 +6,8 @@ git config --global user.name "github-actions[bot]"
 sudo git clone https://github.com/tracefish/ds ~/tmp_ds
 sudo mkdir ~/tmp_scripts/
 sudo mv -f ~/tmp_ds/*.sh ~/tmp_scripts/
-    
+sudo mv -f ~/tmp_ds/*.js ~/tmp_scripts/
+
 get_by_git(){
     mkdir -p ~/jd_scripts/logs
     cp -f docker-compose.yml ~/jd_scripts/
