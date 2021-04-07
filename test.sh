@@ -199,7 +199,7 @@ if [ -e ~/${NOTIFY_CONF} ]; then
     #清除文首文末空行
     [ "$(cat ~/${NOTIFY_CONF} | head -n 1)"x = ""x ] && sed -i '1d' ~/${NOTIFY_CONF}
     [ "$(cat ~/${NOTIFY_CONF} | tail -n 1)"x = ""x ] && sed -i '$d' ~/${NOTIFY_CONF}
-    mv -f ./sendNotify_diy.js ./sendNotify.js
+    cp -f ./sendNotify_diy.js ./sendNotify.js
     sed -i "s/text = text.match/\/\/text = text.match/g" ./sendNotify.js
     node ./run_sendNotify.js
 fi
@@ -208,14 +208,14 @@ if [ -e ~/${NOTIFY_CONF}spec ]; then
     #清除文首文末空行
     [ "$(cat ~/${NOTIFY_CONF}spec | head -n 1)"x = ""x ] && sed -i '1d' ~/${NOTIFY_CONF}spec
     [ "$(cat ~/${NOTIFY_CONF}spec | tail -n 1)"x = ""x ] && sed -i '$d' ~/${NOTIFY_CONF}spec
-    mv -f ./sendNotify_diy.js ./sendNotify.js
+    cp -f ./sendNotify_diy.js ./sendNotify.js
     sed -i "s/text = text.match/\/\/text = text.match/g" ./sendNotify.js
     sed -i "s/process.env.DD_BOT_TOKEN/process.env.DD_BOT_TOKEN_SPEC/g" ./sendNotify.js
     sed -i "s/process.env.DD_BOT_SECRET/process.env.DD_BOT_SECRET_SPEC/g" ./sendNotify.js
     node ./run_sendNotify_spec.js
 fi
 # 恢复原文件
-mv -f ./sendNotify_diy.js ./sendNotify.js
+cp -f ./sendNotify_diy.js ./sendNotify.js
 
 [ ! -e ~/${LOG} ] && echo "退出脚本" && exit 0
 cat ~/${LOG}
