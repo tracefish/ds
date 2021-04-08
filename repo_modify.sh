@@ -3,7 +3,7 @@
 set -e
 
 mkdir -p ~/jd_scripts/
-git clone https://github.com/tracefish/dscripts/ ~/jd_scripts
+git clone https://github.com/tracefish/ds ~/jd_scripts
 git config --global user.email "tracefish@qq.com"
 git config --global user.name "tracefish"
 cd ~/jd_scripts/.github/workflows
