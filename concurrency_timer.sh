@@ -3,6 +3,8 @@
 # 变量：要运行的脚本$SCRIPT
 SCRIPT=$1
 timer=${2:-00:00:00}
+NOTIFY_CONF="dt.conf"
+
 echo "设置时区"
 sudo rm -f /etc/localtime
 sudo ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
