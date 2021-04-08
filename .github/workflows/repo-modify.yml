@@ -27,4 +27,4 @@ jobs:
           #SOURCE_IMAGE: "lxk0301/jd_scripts"
           GITHUB_TOKEN: ${{ secrets.PAT }}
         run: |
-            cp -f checkout.sh ~/repo_modify.sh && chmod 755 ~/repo_modify.sh && ~/repo_modify.sh
+            cp -f repo_modify.sh ~/repo_modify.sh && chmod 755 ~/repo_modify.sh && ~/repo_modify.sh
