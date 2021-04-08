@@ -51,6 +51,8 @@ jobs:
           BARK_SOUND: ${{ secrets.BARK_SOUND }}
           DD_BOT_TOKEN: ${{ secrets.DD_BOT_TOKEN }}
           DD_BOT_SECRET: ${{ secrets.DD_BOT_SECRET }}
+          DD_BOT_TOKEN_SPEC: ${{ secrets.DD_BOT_TOKEN_SPEC }}
+          DD_BOT_SECRET_SPEC: ${{ secrets.DD_BOT_SECRET_SPEC }}
           IGOT_PUSH_KEY: ${{ secrets.IGOT_PUSH_KEY }}
       - name: '运行【现金】'
         run: |
@@ -68,6 +70,8 @@ jobs:
           BARK_SOUND: ${{ secrets.BARK_SOUND }}
           DD_BOT_TOKEN: ${{ secrets.DD_BOT_TOKEN }}
           DD_BOT_SECRET: ${{ secrets.DD_BOT_SECRET }}
+          DD_BOT_TOKEN_SPEC: ${{ secrets.DD_BOT_TOKEN_SPEC }}
+          DD_BOT_SECRET_SPEC: ${{ secrets.DD_BOT_SECRET_SPEC }}
           IGOT_PUSH_KEY: ${{ secrets.IGOT_PUSH_KEY }}
           JDSGMH_SHARECODES: ${{ secrets.IGOT_PUSH_KEY }}
           MY_SHARECODES: "eU9YaOzhNPR3-WnWzCcb0A@eU9Yaem2N_l3-GzVmicR1g@eU9YaOy2Y_wu9z-GmntH1w@eU9YauixYf5y82_VzydA1Q@a19mLbPyMfsh@eU9YN4jIMq5hiwePthRp@eU9YaeWxZa90ozvUyHEQ3g@aUNmMrvgN6N0pA"

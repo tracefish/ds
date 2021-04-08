@@ -49,6 +49,8 @@ jobs:
           TG_USER_ID: ${{ secrets.TG_USER_ID }}
           DD_BOT_TOKEN: ${{ secrets.DD_BOT_TOKEN }}
           DD_BOT_SECRET: ${{ secrets.DD_BOT_SECRET }}
+          DD_BOT_TOKEN_SPEC: ${{ secrets.DD_BOT_TOKEN_SPEC }}
+          DD_BOT_SECRET_SPEC: ${{ secrets.DD_BOT_SECRET_SPEC }}
           IGOT_PUSH_KEY: ${{ secrets.IGOT_PUSH_KEY }}
       - name: '运行 【京东众筹许愿池】'
         run: |
@@ -67,6 +69,8 @@ jobs:
           BARK_SOUND: ${{ secrets.BARK_SOUND }}
           DD_BOT_TOKEN: ${{ secrets.DD_BOT_TOKEN }}
           DD_BOT_SECRET: ${{ secrets.DD_BOT_SECRET }}
+          DD_BOT_TOKEN_SPEC: ${{ secrets.DD_BOT_TOKEN_SPEC }}
+          DD_BOT_SECRET_SPEC: ${{ secrets.DD_BOT_SECRET_SPEC }}
           IGOT_PUSH_KEY: ${{ secrets.IGOT_PUSH_KEY }}
           SYNCURL: "https://raw.githubusercontent.com/wuzhi01/MyActions/main/jd_wish.js"
       - name: '运行 【京东抽奖机】'
@@ -83,4 +87,6 @@ jobs:
           TG_USER_ID: ${{ secrets.TG_USER_ID }}
           DD_BOT_TOKEN: ${{ secrets.DD_BOT_TOKEN }}
           DD_BOT_SECRET: ${{ secrets.DD_BOT_SECRET }}
+          DD_BOT_TOKEN_SPEC: ${{ secrets.DD_BOT_TOKEN_SPEC }}
+          DD_BOT_SECRET_SPEC: ${{ secrets.DD_BOT_SECRET_SPEC }}
           IGOT_PUSH_KEY: ${{ secrets.IGOT_PUSH_KEY }}

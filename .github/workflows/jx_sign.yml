@@ -44,6 +44,8 @@ jobs:
           TG_USER_ID: ${{ secrets.TG_USER_ID }}
           DD_BOT_TOKEN: ${{ secrets.DD_BOT_TOKEN }}
           DD_BOT_SECRET: ${{ secrets.DD_BOT_SECRET }}
+          DD_BOT_TOKEN_SPEC: ${{ secrets.DD_BOT_TOKEN_SPEC }}
+          DD_BOT_SECRET_SPEC: ${{ secrets.DD_BOT_SECRET_SPEC }}
           IGOT_PUSH_KEY: ${{ secrets.IGOT_PUSH_KEY }}
       - name: '运行 【疯狂的Joy】'
         run: |
@@ -59,6 +61,8 @@ jobs:
           TG_USER_ID: ${{ secrets.TG_USER_ID }}
           DD_BOT_TOKEN: ${{ secrets.DD_BOT_TOKEN }}
           DD_BOT_SECRET: ${{ secrets.DD_BOT_SECRET }}
+          DD_BOT_TOKEN_SPEC: ${{ secrets.DD_BOT_TOKEN_SPEC }}
+          DD_BOT_SECRET_SPEC: ${{ secrets.DD_BOT_SECRET_SPEC }}
           IGOT_PUSH_KEY: ${{ secrets.IGOT_PUSH_KEY }}
           JDJOY_HELPSELF: ${{ secrets.JDJOY_HELPSELF }}
           JDJOY_APPLYJDBEAN: ${{ secrets.JDJOY_APPLYJDBEAN || 2000 }}
