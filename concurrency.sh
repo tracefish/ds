@@ -191,6 +191,9 @@ do
         fi
     fi
     [ -e "./${NOTIFY_CONF}" -a ! -e "~/${NOTIFY_CONF}name" ] && cat ./${NOTIFY_CONF} | head -n 1 > ~/${NOTIFY_CONF}name 
+    
+    # 清空文件
+    echo "" > ./${NOTIFY_CONF}
 done
 
 cd ~/scripts
