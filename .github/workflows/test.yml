@@ -58,4 +58,4 @@ jobs:
           DD_BOT_TOKEN: ${{ secrets.DD_BOT_TOKEN }}
           DD_BOT_SECRET: ${{ secrets.DD_BOT_SECRET }}
           IGOT_PUSH_KEY: ${{ secrets.IGOT_PUSH_KEY }}
-          #SYNCURL: "https://raw.githubusercontent.com/Twinzo1/kkk/main/jd_syj.js"
+          SYNCURL: "https://raw.githubusercontent.com/jianminLee/jd_scripts/main/jd_dreamFactory.js"
