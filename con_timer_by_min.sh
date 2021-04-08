@@ -4,6 +4,8 @@
 # $2 小于等于十分钟，需要设置定时在上一个小时触发
 SCRIPT=$1
 min=${2}
+NOTIFY_CONF="dt.conf"
+
 echo "设置时区"
 sudo rm -f /etc/localtime
 sudo ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
