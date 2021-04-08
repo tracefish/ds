@@ -173,9 +173,9 @@ specify_send(){
 }
 
 # 清空文件
-echo "" > ~/${NOTIFY_CONF}
-echo "" > ~/${NOTIFY_CONF}spec
-echo "" > ~/${LOG}
+rm -f ~/${NOTIFY_CONF}
+rm -f ~/${NOTIFY_CONF}spec
+rm -f ~/${LOG}
 # 整合推送消息和助力码
 for n in `seq 1 ${#JK_LIST[*]}`
 do
