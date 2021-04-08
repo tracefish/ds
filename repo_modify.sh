@@ -13,7 +13,7 @@ do
 done
 for f in `ls ./`
 do 
-  cat $i | grep -vi "DD_BOT_TOKEN_SPEC" && sed -i 's/          DD_BOT_SECRET: ${{ secrets.DD_BOT_SECRET }}/          DD_BOT_SECRET: ${{ secrets.DD_BOT_SECRET }}\n          DD_BOT_TOKEN_SPEC: ${{ secrets.DD_BOT_TOKEN_SPEC }}\n          DD_BOT_SECRET_SPEC: ${{ secrets.DD_BOT_SECRET_SPEC }}/g' $f
+  cat $f | grep -vi "DD_BOT_TOKEN_SPEC" && sed -i 's/          DD_BOT_SECRET: ${{ secrets.DD_BOT_SECRET }}/          DD_BOT_SECRET: ${{ secrets.DD_BOT_SECRET }}\n          DD_BOT_TOKEN_SPEC: ${{ secrets.DD_BOT_TOKEN_SPEC }}\n          DD_BOT_SECRET_SPEC: ${{ secrets.DD_BOT_SECRET_SPEC }}/g' $f
 done
 
 cd ~/jd_scripts
