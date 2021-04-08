@@ -11,7 +11,6 @@ DELAY="$2"
 
 SCRIPT_NAME=`echo "${1}" | awk -F "." '{print $1}'`
 LOG="${SCRIPT_NAME}.log"
-SCRIPT_NAME=`echo "${1}" | awk -F "." '{print $1}'`
 logDir=".."
 NOTIFY_CONF="dt.conf"
 REPO_URL="https://github.com/tracefish/ds"
