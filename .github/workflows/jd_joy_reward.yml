@@ -39,7 +39,7 @@ jobs:
         run: |
           bash ./concurrency_timer.sh jd_joy_reward.js "16:00:00"
         env:
-          JD_COOKIES: ${{ secrets.JD_COOKIE }}
+          JD_COOKIE: ${{ secrets.JD_COOKIE }}
           JD_DEBUG: ${{ secrets.JD_DEBUG }}
           JD_JOY_REWARD_NOTIFY: ${{ secrets.JD_JOY_REWARD_NOTIFY }}
           JD_JOY_REWARD_NAME: ${{ secrets.JD_JOY_REWARD_NAME || 20 }}
