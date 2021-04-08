@@ -182,11 +182,11 @@ do
     cd ~/scripts${n}
     [ -e "./${LOG}1" ] && cat ./${LOG}1  | sed "s/账号[0-9]/账号$n/g" >> ~/${LOG}
     if [ -e "./${NOTIFY_CONF}" ]; then
+        [ "$(cat ./${NOTIFY_CONF} | head -n 1)"x = ""x ] && sed -i '1d' ./${NOTIFY_CONF}
+        echo "" >> ~/${NOTIFY_CONF}
         if [ $(specify_send ./${NOTIFY_CONF}) -eq 0 ];then
-            echo "" >> ~/${NOTIFY_CONF}
             cat ./${NOTIFY_CONF}  | tail -n +2 | sed "s/账号[0-9]/账号$n/g" >> ~/${NOTIFY_CONF}
         else
-            echo "" >> ~/${NOTIFY_CONF}spec
             cat ./${NOTIFY_CONF}  | tail -n +2 | sed "s/账号[0-9]/账号$n/g" >> ~/${NOTIFY_CONF}spec
         fi
     fi
