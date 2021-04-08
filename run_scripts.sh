@@ -19,7 +19,6 @@ autoHelp(){
     f_shcode=""
     IFS=$'\n'
     JK_LIST=(`echo "$JD_COOKIE" | awk -F "&" '{for(i=1;i<=NF;i++) print $i}'`)
-    [ -z "$JK_LIST" ] && JK_LIST=(`echo "$JD_COOKIES" | awk -F "&" '{for(i=1;i<=NF;i++) print $i}'`)
     if [ -n "$JK_LIST" ]; then
         diff=$((${#JK_LIST[*]}-${#sc_list[*]}))
         for e in `seq 1 $diff`
@@ -75,11 +74,6 @@ fi
 
 echo "替换助力码"
 [ -e "${logDir}/${SCRIPT_NAME}.log" ] && autoHelp "${1}" "${logDir}/${SCRIPT_NAME}.log"
-# 支持并行的cookie
-if [ -n "$JD_COOKIES" ]; then
-  echo "修改cookie"
-  [ -z `cat ./jdCookie.js | grep "process.env.JD_COOKIES"` ] && sed -i 's/process.env.JD_COOKIE/process.env.JD_COOKIES/g' ./jdCookie.js
-fi
 
 echo "DECODE"
 encode_str=(`cat ./$1 | grep "window" | awk -F "window" '{print($1)}'| awk -F "var " '{print $(NF-1)}' | awk -F "=" '{print $1}' | sort -u`)
