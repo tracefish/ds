@@ -135,6 +135,7 @@ IFS=$'\n'
 
 format_sc2txt "${logDir}/ds/${SCRIPT_NAME}.log" "${logDir}/${SCRIPT_NAME}.conf"
 echo "修改cookie"
+cp -f ./jdCookie.js ./jdCookie.bk.js
 sed -i 's/process.env.JD_COOKIE/process.env.JD_COOKIES/g' ./jdCookie.js
 JK_LIST=(`echo "$JD_COOKIE" | awk -F "&" '{for(i=1;i<=NF;i++) print $i}'`)
 
@@ -225,6 +226,7 @@ if [ -e ~/${NOTIFY_CONF}spec ]; then
 fi
 # 恢复原文件
 cp -f ./sendNotify_diy.js ./sendNotify.js
+cp -f ./jdCookie.bk.js ./jdCookie.js
 
 [ ! -e ~/${LOG} ] && echo "退出脚本" && exit 0
 cat ~/${LOG}
