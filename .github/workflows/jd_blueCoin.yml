@@ -6,7 +6,7 @@ name: 京小超兑换奖品
 on:
   workflow_dispatch:
   schedule:
-    - cron: '40 15 * * *'
+    - cron: '55 15 * * *'
 #  watch:
 #    types: started
   repository_dispatch:
@@ -37,7 +37,7 @@ jobs:
            cp -f update_env.sh ~/update_env.sh && chmod 755 ~/update_env.sh && ~/update_env.sh
       - name: '运行 【京小超兑换奖品】'
         run: |
-          bash ./concurrency_timer.sh jd_blueCoin.js
+          bash ./concurrency.sh jd_blueCoin.js
         env:
           JD_COOKIE: ${{ secrets.JD_COOKIE }}
           JD_DEBUG: ${{ secrets.JD_DEBUG }}
