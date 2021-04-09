@@ -17,6 +17,25 @@ REPO_URL="https://github.com/tracefish/ds"
 REPO_BRANCH="sc"
 [ ! -d ~/ds ] && git clone -b "$REPO_BRANCH" $REPO_URL ~/ds
 
+# 准点触发
+act_by_min(){
+    min=${1}
+    echo "设置时区"
+    sudo rm -f /etc/localtime
+    sudo ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+    hour=`date +%H`
+    if [ $min -le 10 ]; then
+      hour=$((hour + 1))
+      [ "$hour" = "24" ] && hour="00"
+    fi
+    timer="${hour}:${min}:00"
+    echo "当前时间: `date`"
+    echo "开始多账号并发"
+    num=0
+    [ "$timer" = "00:00:00" ] && nextdate=`date +%s%N -d "+1 day $timer"` || nextdate=`date +%s%N -d "$timer"`
+    echo $timer
+}
+
 # 修改文件
 modify_scripts(){
     cd ~/scripts
@@ -153,6 +172,16 @@ task(){
     sed -i 's/let CookieJDs/let CookieJDss/g' ./jdCookie.js
     sed -i "1i\let CookieJDs = [ '$jk', ]" ./jdCookie.js
     autoHelp "$SCRIPT" "${logDir}/${SCRIPT_NAME}.conf" $num
+    now=`date +%s%N` && delay=`echo "scale=3;$((nextdate-now))/1000000000" | bc`
+    ([ $nextdate -gt $now ] && echo "未到当天${timer}，等待${delay}秒" && sleep $delay; node ./$SCRIPT | grep -Ev "pt_pin|pt_key") &
+    
+  int_delay=`echo $delay | awk -F "." '{print $1}'`
+  (if [ $nextdate -gt $now ];then 
+    [ $((int_delay - 0)) -le 3600 ] && echo "未到当天${timer}，等待${delay}秒" && sleep $delay || echo "未到当天${timer}，但超出不远，继续运行"
+    node $SCRIPT | grep -Ev "pt_pin|pt_key"
+  fi
+)
+
     (node ./${SCRIPT} | grep -Ev "pt_pin|pt_key") >&1 | tee "./${LOG}"
     collectSharecode "./${LOG}"
     cd -
@@ -256,3 +285,23 @@ upload_code(){
 [ ! -e ~/${LOG} ] && echo "退出脚本" && exit 0
 cat ~/${LOG}
 upload_code
+
+case $2 in
+    "-t")
+        echo "直接指定时间定时"
+        timer=${3:-00:00:00}
+        ;;
+    "-m")
+        echo "指定分钟数定时"
+        timer=act_by_min ${3}
+        ;;    
+    "-o")
+        echo "逐个执行"
+        ;;
+    "-h")
+        echo "帮助"
+        ;;
+    "*")
+        echo "只并行"
+        ;; 
+esac
