@@ -182,15 +182,15 @@ do
     cd ~/scripts${n}
     [ -e "./${LOG}1" ] && cat ./${LOG}1  | sed "s/账号[0-9]/账号$n/g" >> ~/${LOG}
     if [ -e "./${NOTIFY_CONF}" ]; then
-        [ "$(cat ./${NOTIFY_CONF} | head -n 1)"x = ""x ] && sed -i '1d' ./${NOTIFY_CONF}
         echo "" >> ~/${NOTIFY_CONF}
+        echo "" >> ~/${NOTIFY_CONF}name
         if [ $(specify_send ./${NOTIFY_CONF}) -eq 0 ];then
             cat ./${NOTIFY_CONF}  | tail -n +2 | sed "s/账号[0-9]/账号$n/g" >> ~/${NOTIFY_CONF}
         else
             cat ./${NOTIFY_CONF}  | tail -n +2 | sed "s/账号[0-9]/账号$n/g" >> ~/${NOTIFY_CONF}spec
         fi
+        [ ! -s "~/${NOTIFY_CONF}name" ] && cat ./${NOTIFY_CONF} | head -n 1 > ~/${NOTIFY_CONF}name 
     fi
-    [ -e "./${NOTIFY_CONF}" -a ! -e "~/${NOTIFY_CONF}name" ] && cat ./${NOTIFY_CONF} | head -n 1 > ~/${NOTIFY_CONF}name 
     
     # 清空文件
     echo "" > ./${NOTIFY_CONF}
@@ -206,7 +206,7 @@ if [ -e ~/${NOTIFY_CONF} ]; then
     [ "$(cat ~/${NOTIFY_CONF} | head -n 1)"x = ""x ] && sed -i '1d' ~/${NOTIFY_CONF}
     [ "$(cat ~/${NOTIFY_CONF} | tail -n 1)"x = ""x ] && sed -i '$d' ~/${NOTIFY_CONF}
     cp -f ./sendNotify_diy.js ./sendNotify.js
-    sed -i "s/text = text.match/\/\/text = text.match/g" ./sendNotify.js
+    sed -ie 's/text}\\n\\n/text}\\n/g' 's/\\n\\n本脚本/\\n本脚本/g' "s/text = text.match/\/\/text = text.match/g" ./sendNotify.js
     node ./run_sendNotify.js
     rm -f ./${NOTIFY_CONF}
     rm -f ~/${NOTIFY_CONF}
@@ -219,7 +219,7 @@ if [ -e ~/${NOTIFY_CONF}spec ]; then
     [ "$(cat ~/${NOTIFY_CONF}spec | head -n 1)"x = ""x ] && sed -i '1d' ~/${NOTIFY_CONF}spec
     [ "$(cat ~/${NOTIFY_CONF}spec | tail -n 1)"x = ""x ] && sed -i '$d' ~/${NOTIFY_CONF}spec
     cp -f ./sendNotify_diy.js ./sendNotify.js
-    sed -i "s/text = text.match/\/\/text = text.match/g" ./sendNotify.js
+    sed -ie 's/text}\\n\\n/text}\\n/g' 's/\\n\\n本脚本/\\n本脚本/g' "s/text = text.match/\/\/text = text.match/g" ./sendNotify.js
     sed -i "s/process.env.DD_BOT_TOKEN/process.env.DD_BOT_TOKEN_SPEC/g" ./sendNotify.js
     sed -i "s/process.env.DD_BOT_SECRET/process.env.DD_BOT_SECRET_SPEC/g" ./sendNotify.js
     node ./run_sendNotify_spec.js
