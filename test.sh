@@ -17,30 +17,33 @@ REPO_URL="https://github.com/tracefish/ds"
 REPO_BRANCH="sc"
 [ ! -d ~/ds ] && git clone -b "$REPO_BRANCH" $REPO_URL ~/ds
 
-cd ~/scripts
+# 修改文件
+modify_scripts(){
+    cd ~/scripts
 
-if [ -n "$SYNCURL" ]; then
-    echo "下载脚本"
-    curl "$SYNCURL" > "./$1"
-    # 外链脚本替换
-    sed -i "s/indexOf('GITHUB')/indexOf('GOGOGOGO')/g" `ls -l |grep -v ^d|awk '{print $9}'`
-    sed -i 's/indexOf("GITHUB")/indexOf("GOGOGOGO")/g' `ls -l |grep -v ^d|awk '{print $9}'`
-fi
-[ ! -e "./$1" ] && echo "脚本不存在" && exit 0
+    if [ -n "$SYNCURL" ]; then
+        echo "下载脚本"
+        curl "$SYNCURL" > "./$1"
+        # 外链脚本替换
+        sed -i "s/indexOf('GITHUB')/indexOf('GOGOGOGO')/g" `ls -l |grep -v ^d|awk '{print $9}'`
+        sed -i 's/indexOf("GITHUB")/indexOf("GOGOGOGO")/g' `ls -l |grep -v ^d|awk '{print $9}'`
+    fi
+    [ ! -e "./$1" ] && echo "脚本不存在" && exit 0
 
-echo "修改发送方式"
-cp -f ./sendNotify.js ./sendNotify_diy.js
-sed -i "s/desp += author/\/\/desp += author/g" ./sendNotify.js
-sed -i "/text = text.match/a   var fs = require('fs');fs.appendFile(\"./\" + \"$NOTIFY_CONF\", text + \"\\\n\", function(err) {if(err) {return console.log(err);}});fs.appendFile(\"./\" + \"$NOTIFY_CONF\", desp + \"\\\n\", function(err) {if(err) {return console.log(err);}});\n  return" ./sendNotify.js
+    echo "修改发送方式"
+    cp -f ./sendNotify.js ./sendNotify_diy.js
+    sed -i "s/desp += author/\/\/desp += author/g" ./sendNotify.js
+    sed -i "/text = text.match/a   var fs = require('fs');fs.appendFile(\"./\" + \"$NOTIFY_CONF\", text + \"\\\n\", function(err) {if(err) {return console.log(err);}});fs.appendFile(\"./\" + \"$NOTIFY_CONF\", desp + \"\\\n\", function(err) {if(err) {return console.log(err);}});\n  return" ./sendNotify.js
 
-echo "DECODE"
-encode_str=(`cat ./$1 | grep "window" | awk -F "window" '{print($1)}'| awk -F "var " '{print $(NF-1)}' | awk -F "=" '{print $1}' | sort -u`)
-if [ -n "$encode_str" ]; then
-    for ec in ${encode_str[*]}
-    do
-        sed -i "s/return $ec/if($ec.toLowerCase()==\"github\"){$ec=\"GOGOGOGO\"};return $ec/g" ./$1
-    done
-fi
+    echo "DECODE"
+    encode_str=(`cat ./$1 | grep "window" | awk -F "window" '{print($1)}'| awk -F "var " '{print $(NF-1)}' | awk -F "=" '{print $1}' | sort -u`)
+    if [ -n "$encode_str" ]; then
+        for ec in ${encode_str[*]}
+        do
+            sed -i "s/return $ec/if($ec.toLowerCase()==\"github\"){$ec=\"GOGOGOGO\"};return $ec/g" ./$1
+        done
+    fi
+}
 
 # 格式化助力码到文本
 format_sc2txt(){
@@ -129,6 +132,9 @@ collectSharecode(){
         echo $code | awk '{for(i=1;i<=NF;i++)print $i}' > ./${LOG}1
     fi
 }
+
+cd ~/scripts
+modify_scripts
 
 echo "开始多账号并发"
 IFS=$'\n'
@@ -226,22 +232,27 @@ fi
 # 恢复原文件
 cp -f ./sendNotify_diy.js ./sendNotify.js
 
+# 上传助力码文件
+upload_code(){
+    echo "上传助力码文件"
+    cd ~/ds
+    echo "拉取最新源码"
+    git config --global user.email "tracefish@qq.com"
+    git config --global user.name "tracefish"
+    git pull origin "$REPO_BRANCH:$REPO_BRANCH"
+
+    echo "Resetting origin to: https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY"
+    sudo git remote set-url origin "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY"
+
+    echo "强制覆盖原文件"
+    mv -v ~/${LOG} ./${LOG}
+    git add .
+    git commit -m "update ${SCRIPT_NAME} `date +%Y%m%d%H%M%S`" 2>/dev/null
+
+    echo "Pushing changings from tmp_upstream to origin"
+    sudo git push origin "$REPO_BRANCH:$REPO_BRANCH" --force
+}
+
 [ ! -e ~/${LOG} ] && echo "退出脚本" && exit 0
 cat ~/${LOG}
-echo "上传助力码文件"
-cd ~/ds
-echo "拉取最新源码"
-git config --global user.email "tracefish@qq.com"
-git config --global user.name "tracefish"
-git pull origin "$REPO_BRANCH:$REPO_BRANCH"
-
-echo "Resetting origin to: https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY"
-sudo git remote set-url origin "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY"
-
-echo "强制覆盖原文件"
-mv -v ~/${LOG} ./${LOG}
-git add .
-git commit -m "update ${SCRIPT_NAME} `date +%Y%m%d%H%M%S`" 2>/dev/null
-
-echo "Pushing changings from tmp_upstream to origin"
-sudo git push origin "$REPO_BRANCH:$REPO_BRANCH" --force
+upload_code
