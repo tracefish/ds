@@ -1,4 +1,4 @@
-  #!/bin/bash
+#!/bin/bash
 # 多账号并发,不定时
 # 变量：要运行的脚本$SCRIPT
 # 默认随机延迟5-12秒
@@ -11,7 +11,6 @@ DELAY="$2"
 
 SCRIPT_NAME=`echo "${1}" | awk -F "." '{print $1}'`
 LOG="${SCRIPT_NAME}.log"
-SCRIPT_NAME=`echo "${1}" | awk -F "." '{print $1}'`
 logDir=".."
 NOTIFY_CONF="dt.conf"
 REPO_URL="https://github.com/tracefish/ds"
@@ -167,61 +166,62 @@ unset IFS
 
 wait
 
-#判断是否需要特别推送
+# 清除连续空行为一行和首尾空行
+blank_lines2blank_line(){
+    # $1: 文件名
+    # 删除连续空行为一行
+    sed -i '/^$/{N;/\n$/d}' $1
+    #清除文首文末空行
+    [ "$(cat ~/${NOTIFY_CONF} | head -n 1)"x = ""x ] && sed -i '1d' $1
+    [ "$(cat ~/${NOTIFY_CONF} | tail -n 1)"x = ""x ] && sed -i '$d' $1
+}
+
+# 判断是否需要特别推送
 specify_send(){
   ret=`cat $1 | grep "提醒\|已超时\|已可兑换"`
   [ -n "$ret" ] && echo 1 || echo 0
 }
 
 # 清空文件
-echo "" > ~/${NOTIFY_CONF}
-echo "" > ~/${NOTIFY_CONF}spec
-echo "" > ~/${LOG}
+rm -f ~/${NOTIFY_CONF}*
+rm -f ~/${LOG}
 # 整合推送消息和助力码
 for n in `seq 1 ${#JK_LIST[*]}`
 do
     cd ~/scripts${n}
     [ -e "./${LOG}1" ] && cat ./${LOG}1  | sed "s/账号[0-9]/账号$n/g" >> ~/${LOG}
     if [ -e "./${NOTIFY_CONF}" ]; then
+        echo "" >> ~/${NOTIFY_CONF}
+        echo "" >> ~/${NOTIFY_CONF}name
         if [ $(specify_send ./${NOTIFY_CONF}) -eq 0 ];then
-            echo "" >> ~/${NOTIFY_CONF}
             cat ./${NOTIFY_CONF}  | tail -n +2 | sed "s/账号[0-9]/账号$n/g" >> ~/${NOTIFY_CONF}
         else
-            echo "" >> ~/${NOTIFY_CONF}spec
             cat ./${NOTIFY_CONF}  | tail -n +2 | sed "s/账号[0-9]/账号$n/g" >> ~/${NOTIFY_CONF}spec
         fi
+        [ ! -s "~/${NOTIFY_CONF}name" ] && cat ./${NOTIFY_CONF} | head -n 1 > ~/${NOTIFY_CONF}name 
     fi
-    [ -e "./${NOTIFY_CONF}" -a ! -e "~/${NOTIFY_CONF}name" ] && cat ./${NOTIFY_CONF} | head -n 1 > ~/${NOTIFY_CONF}name 
+    
+    # 清空文件
+    rm -f ./${NOTIFY_CONF}
 done
 
 cd ~/scripts
 echo "推送消息"
-[ "$(cat ~/${NOTIFY_CONF}name | tail -n 1)"x = ""x ] && sed -i '$d' ~/${NOTIFY_CONF}name
 if [ -e ~/${NOTIFY_CONF} ]; then
-    # 删除连续空行为一行
-    sed -i '/^$/{N;/\n$/d}' ~/${NOTIFY_CONF}
-    #清除文首文末空行
-    [ "$(cat ~/${NOTIFY_CONF} | head -n 1)"x = ""x ] && sed -i '1d' ~/${NOTIFY_CONF}
-    [ "$(cat ~/${NOTIFY_CONF} | tail -n 1)"x = ""x ] && sed -i '$d' ~/${NOTIFY_CONF}
+    blank_lines2blank_line ~/${NOTIFY_CONF}
+    blank_lines2blank_line ~/${NOTIFY_CONF}name
     cp -f ./sendNotify_diy.js ./sendNotify.js
-    sed -i "s/text = text.match/\/\/text = text.match/g" ./sendNotify.js
+    sed -ie 's/text}\\n\\n/text}\\n/g' 's/\\n\\n本脚本/\\n本脚本/g' "s/text = text.match/\/\/text = text.match/g" ./sendNotify.js
     node ./run_sendNotify.js
-    rm -f ./${NOTIFY_CONF}
-    rm -f ~/${NOTIFY_CONF}
 fi
 # 特殊推送
 if [ -e ~/${NOTIFY_CONF}spec ]; then
-    # 删除连续空行为一行
-    sed -i '/^$/{N;/\n$/d}' ~/${NOTIFY_CONF}spec
-    #清除文首文末空行
-    [ "$(cat ~/${NOTIFY_CONF}spec | head -n 1)"x = ""x ] && sed -i '1d' ~/${NOTIFY_CONF}spec
-    [ "$(cat ~/${NOTIFY_CONF}spec | tail -n 1)"x = ""x ] && sed -i '$d' ~/${NOTIFY_CONF}spec
+    blank_lines2blank_line ~/${NOTIFY_CONF}spec
     cp -f ./sendNotify_diy.js ./sendNotify.js
-    sed -i "s/text = text.match/\/\/text = text.match/g" ./sendNotify.js
+    sed -ie 's/text}\\n\\n/text}\\n/g' 's/\\n\\n本脚本/\\n本脚本/g' "s/text = text.match/\/\/text = text.match/g" ./sendNotify.js
     sed -i "s/process.env.DD_BOT_TOKEN/process.env.DD_BOT_TOKEN_SPEC/g" ./sendNotify.js
     sed -i "s/process.env.DD_BOT_SECRET/process.env.DD_BOT_SECRET_SPEC/g" ./sendNotify.js
     node ./run_sendNotify_spec.js
-    rm -f ~/${NOTIFY_CONF}spec
 fi
 # 恢复原文件
 cp -f ./sendNotify_diy.js ./sendNotify.js
