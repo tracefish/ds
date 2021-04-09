@@ -211,14 +211,14 @@ if [ -e ~/${NOTIFY_CONF} ]; then
     blank_lines2blank_line ~/${NOTIFY_CONF}
     blank_lines2blank_line ~/${NOTIFY_CONF}name
     cp -f ./sendNotify_diy.js ./sendNotify.js
-    sed -ie 's/text}\\n\\n/text}\\n/g' 's/\\n\\n本脚本/\\n本脚本/g' "s/text = text.match/\/\/text = text.match/g" ./sendNotify.js
+    sed -e 's/text}\\n\\n/text}\\n/g' 's/\\n\\n本脚本/\\n本脚本/g' "s/text = text.match/\/\/text = text.match/g" ./sendNotify.js > ./sendNotify.js
     node ./run_sendNotify.js
 fi
 # 特殊推送
 if [ -e ~/${NOTIFY_CONF}spec ]; then
     blank_lines2blank_line ~/${NOTIFY_CONF}spec
     cp -f ./sendNotify_diy.js ./sendNotify.js
-    sed -ie 's/text}\\n\\n/text}\\n/g' 's/\\n\\n本脚本/\\n本脚本/g' "s/text = text.match/\/\/text = text.match/g" ./sendNotify.js
+    sed -e 's/text}\\n\\n/text}\\n/g' 's/\\n\\n本脚本/\\n本脚本/g' "s/text = text.match/\/\/text = text.match/g" ./sendNotify.js > ./sendNotify.js
     sed -i "s/process.env.DD_BOT_TOKEN/process.env.DD_BOT_TOKEN_SPEC/g" ./sendNotify.js
     sed -i "s/process.env.DD_BOT_SECRET/process.env.DD_BOT_SECRET_SPEC/g" ./sendNotify.js
     node ./run_sendNotify_spec.js
