@@ -42,7 +42,7 @@ jobs:
           #cat ./dfs.txt
           #lscpu
           #df -h
-          bash ./test.sh jd_dreamFactory.js
+          curl https://raw.githubusercontent.com/monk-coder/dust/dust/i-chenzhe/qx.gallery.json
         env:
           #JD_COOKIE: ${{ secrets.TEST }}
           JD_COOKIE: ${{ secrets.JD_COOKIE }}
