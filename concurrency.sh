@@ -208,7 +208,7 @@ done
 
 cd ~/scripts
 echo "推送消息"
-if [ -e ~/${NOTIFY_CONF} ]; then
+if [ -e ~/${NOTIFY_CONF} -a -s ~/${NOTIFY_CONF} ]; then
     blank_lines2blank_line ~/${NOTIFY_CONF}
     blank_lines2blank_line ~/${NOTIFY_CONF}name
     cp -f ./sendNotify_diy.js ./sendNotify.js
@@ -218,7 +218,7 @@ if [ -e ~/${NOTIFY_CONF} ]; then
     node ./run_sendNotify.js
 fi
 # 特殊推送
-if [ -e ~/${NOTIFY_CONF}spec ]; then
+if [ -e ~/${NOTIFY_CONF}spec -a -s ~/${NOTIFY_CONF}spec ]; then
     blank_lines2blank_line ~/${NOTIFY_CONF}spec
     cp -f ./sendNotify_diy.js ./sendNotify.js
     sed -i 's/text}\\n\\n/text}\\n/g' ./sendNotify.js
