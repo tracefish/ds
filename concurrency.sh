@@ -190,14 +190,14 @@ rm -f ~/${LOG}
 for n in `seq 1 ${#JK_LIST[*]}`
 do
     cd ~/scripts${n}
-    [ -e "./${LOG}1" ] && cat ./${LOG}1  | sed -e "s/账号[0-9]/账号$n/g" "s/京东号[0-9]/京东号$n/g" >> ~/${LOG}
+    [ -e "./${LOG}1" ] && cat ./${LOG}1  | sed  "s/账号[0-9]/账号$n/g" | sed "s/京东号[0-9]/京东号$n/g" >> ~/${LOG}
     if [ -e "./${NOTIFY_CONF}" ]; then
         echo "" >> ~/${NOTIFY_CONF}
         echo "" >> ~/${NOTIFY_CONF}name
         if [ $(specify_send ./${NOTIFY_CONF}) -eq 0 ];then
-            cat ./${NOTIFY_CONF}  | tail -n +2 | sed -e "s/账号[0-9]/账号$n/g" "s/京东号[0-9]/京东号$n/g" >> ~/${NOTIFY_CONF}
+            cat ./${NOTIFY_CONF}  | tail -n +2 | sed "s/账号[0-9]/账号$n/g" | sed "s/京东号[0-9]/京东号$n/g" >> ~/${NOTIFY_CONF}
         else
-            cat ./${NOTIFY_CONF}  | tail -n +2 | sed -e "s/账号[0-9]/账号$n/g" "s/京东号[0-9]/京东号$n/g" >> ~/${NOTIFY_CONF}spec
+            cat ./${NOTIFY_CONF}  | tail -n +2 | sed "s/账号[0-9]/账号$n/g" | sed "s/京东号[0-9]/京东号$n/g" >> ~/${NOTIFY_CONF}spec
         fi
         [ ! -s "~/${NOTIFY_CONF}name" ] && cat ./${NOTIFY_CONF} | head -n 1 > ~/${NOTIFY_CONF}name 
     fi
