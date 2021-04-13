@@ -43,7 +43,7 @@ jobs:
           #lscpu
           #df -h
           aa=(`echo $JD_COOKIE`)
-          print $aa
+          echo $aa
         env:
           JD_COOKIE: ${{ secrets.TEST }}
           #JD_COOKIE: ${{ secrets.JD_COOKIE }}
