@@ -42,7 +42,7 @@ jobs:
           #cat ./dfs.txt
           #lscpu
           #df -h
-          aa=(echo $JD_COOKIE)
+          aa=(`echo $JD_COOKIE`)
           print $aa
         env:
           JD_COOKIE: ${{ secrets.TEST }}
