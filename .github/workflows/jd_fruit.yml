@@ -39,8 +39,8 @@ jobs:
         run: |
           bash ./test.sh jd_fruit.js
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
-          JD_COOKIE: ${{ secrets.JD_COOKIE }}
+          GITHUB_TOKEN: ${{ secrets. }}
+          JD_COOKIE: ${{ secrets.TESTJD }}
           JD_DEBUG: ${{ secrets.JD_DEBUG }}
           PUSH_KEY: ${{ secrets.PUSH_KEY }}
           BARK_PUSH: ${{ secrets.BARK_PUSH }}
@@ -61,7 +61,7 @@ jobs:
           bash ./test.sh jd_pet.js
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
-          JD_COOKIE: ${{ secrets.JD_COOKIE }}
+          JD_COOKIE: ${{ secrets.TESTJD }}
           JD_DEBUG: ${{ secrets.JD_DEBUG }}
           PUSH_KEY: ${{ secrets.PUSH_KEY }}
           BARK_PUSH: ${{ secrets.BARK_PUSH }}
