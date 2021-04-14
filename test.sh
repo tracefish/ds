@@ -7,7 +7,7 @@
 # 通过 `test.sh jd.js delay 2` 指定延迟时间
 # `test.sh jd.js 00:00:12 2` 通过时间，指定脚本 运行时间 和 延迟时间（默认为0）
 #  `test.sh jd.js 12 2` 通过分钟（小于等于十分钟，需要设置定时在上一个小时触发），指定脚本 运行时间 和 延迟时间（默认为0）
-# 版本：v2.0
+# 版本：v2.1
 
 # set -e
 SCRIPT="$1"
@@ -239,13 +239,13 @@ main(){
 		[ -e "./${LOG}1" ] && cat ./${LOG}1  | sed  "s/账号[0-9]/账号$n/g" | sed "s/京东号 [0-9]/京东号$n/g" >> ${home}/${LOG}
 		if [ -e "./${NOTIFY_CONF}" ]; then
 			echo "" >> ${home}/${NOTIFY_CONF}
-			echo "" >> ${home}/${NOTIFY_CONF}name
+			echo "" >> ${home}/${NOTIFY_CONF}spec
 			if [ $(specify_send ./${NOTIFY_CONF}) -eq 0 ];then
 				cat ./${NOTIFY_CONF} | sed "s/账号[0-9]/账号$n/g" | sed "s/京东号 [0-9]/京东号$n/g" >> ${home}/${NOTIFY_CONF}
 			else
 				cat ./${NOTIFY_CONF} | sed "s/账号[0-9]/账号$n/g" | sed "s/京东号 [0-9]/京东号$n/g" >> ${home}/${NOTIFY_CONF}spec
 			fi
-			[ ! -s "${home}/${NOTIFY_CONF}name" ] && cat ./${NOTIFY_CONF}name > ${home}/${NOTIFY_CONF}name 
+			[ ! -e "${home}/${NOTIFY_CONF}name" ] && cat ./${NOTIFY_CONF}name > ${home}/${NOTIFY_CONF}name 
 			# 清空文件
 			rm -f ./${NOTIFY_CONF}
 		fi
@@ -299,7 +299,7 @@ upload_code(){
 # $1：克隆仓库目录
 # $2：助力码文件
 # $3：仓库本地助力码文件
-	[ ! -e $2 ] && echo "退出脚本" && exit 0
+	[ ! -e $2 -o -z "$GITHUB_TOKEN" ] && echo "退出脚本" && exit 0
 
 	echo "上传助力码文件"
 	cd $1
