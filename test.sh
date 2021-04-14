@@ -4,70 +4,81 @@
 # 默认随机延迟5-12秒
 # DD_BOT_SECRET_SPEC：特别推送
 # DD_BOT_TOKEN_SPEC：特别推送
+# 通过 `test.sh jd.js delay 2` 指定延迟时间
+# `test.sh jd.js 00:00:12 2` 通过时间，指定脚本 运行时间 和 延迟时间（默认为0）
+#  `test.sh jd.js 12 2` 通过分钟（小于等于十分钟，需要设置定时在上一个小时触发），指定脚本 运行时间 和 延迟时间（默认为0）
+# 版本：v2.0
 
 # set -e
 SCRIPT="$1"
-DELAY="$2"
+SKD="$2"
+# 延迟时间设置
+DELAY="$3"
 
 SCRIPT_NAME=`echo "${1}" | awk -F "." '{print $1}'`
 LOG="${SCRIPT_NAME}.log"
-logDir=".."
 NOTIFY_CONF="dt.conf"
 REPO_URL="https://github.com/tracefish/ds"
 REPO_BRANCH="sc"
-[ ! -d ~/ds ] && git clone -b "$REPO_BRANCH" $REPO_URL ~/ds
+# 防止action抽风，加双引号不能输出home目录
+home=`echo ~`
+# 助力码文件目录
+SHCD_DIR="${home}/ds"
+# 脚本文件初始目录
+SCRIPT_DIR="${home}/scripts"
+
+[ ! -d ${SHCD_DIR} ] && git clone -b "$REPO_BRANCH" $REPO_URL ${SHCD_DIR}
 
 # 准点触发
 act_by_min(){
     min=${1}
-    echo "设置时区"
+    # 设置时区
     sudo rm -f /etc/localtime
     sudo ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-    hour=`date +%H`
-    if [ $min -le 10 ]; then
-      hour=$((hour + 1))
-      [ "$hour" = "24" ] && hour="00"
-    fi
-    timer="${hour}:${min}:00"
-    echo "当前时间: `date`"
-    echo "开始多账号并发"
-    num=0
+	if [ ! -n `echo $min | grep ":"` ]; then
+		hour=`date +%H`
+		if [ $min -le 10 ]; then
+			hour=$((hour + 1))
+			[ "$hour" = "24" ] && hour="00"
+		fi
+		timer="${hour}:${min}:00"
+	fi
     [ "$timer" = "00:00:00" ] && nextdate=`date +%s%N -d "+1 day $timer"` || nextdate=`date +%s%N -d "$timer"`
     echo $timer
 }
 
 # 修改文件
 modify_scripts(){
-    cd ~/scripts
+	cd ${SCRIPT_DIR}
 
-    if [ -n "$SYNCURL" ]; then
-        echo "下载脚本"
-        curl "$SYNCURL" > "./$1"
-        # 外链脚本替换
-        sed -i "s/indexOf('GITHUB')/indexOf('GOGOGOGO')/g" `ls -l |grep -v ^d|awk '{print $9}'`
-        sed -i 's/indexOf("GITHUB")/indexOf("GOGOGOGO")/g' `ls -l |grep -v ^d|awk '{print $9}'`
-    fi
-    [ ! -e "./$1" ] && echo "脚本不存在" && exit 0
-
-    echo "修改发送方式"
-    cp -f ./sendNotify.js ./sendNotify_diy.js
-    sed -i "s/desp += author/\/\/desp += author/g" ./sendNotify.js
-    sed -i "/text = text.match/a   var fs = require('fs');fs.appendFile(\"./\" + \"$NOTIFY_CONF\", text + \"\\\n\", function(err) {if(err) {return console.log(err);}});fs.appendFile(\"./\" + \"$NOTIFY_CONF\", desp + \"\\\n\", function(err) {if(err) {return console.log(err);}});\n  return" ./sendNotify.js
-
-    echo "DECODE"
-    encode_str=(`cat ./$1 | grep "window" | awk -F "window" '{print($1)}'| awk -F "var " '{print $(NF-1)}' | awk -F "=" '{print $1}' | sort -u`)
-    if [ -n "$encode_str" ]; then
-        for ec in ${encode_str[*]}
-        do
-            sed -i "s/return $ec/if($ec.toLowerCase()==\"github\"){$ec=\"GOGOGOGO\"};return $ec/g" ./$1
-        done
-    fi
+	if [ -n "$SYNCURL" ]; then
+    	echo "下载脚本"
+	    curl "$SYNCURL" > ./${SCRIPT}
+    	# 外链脚本替换
+	    sed -i "s/indexOf('GITHUB')/indexOf('GOGOGOGO')/g" `ls -l | grep -v ^d | awk '{print $9}'`
+    	sed -i 's/indexOf("GITHUB")/indexOf("GOGOGOGO")/g' `ls -l | grep -v ^d | awk '{print $9}'`
+	fi
+	[ ! -e "./$1" ] && echo "脚本不存在" && exit 0
+	
+	echo "修改发送方式"
+	cp -f ./sendNotify.js ./sendNotify_diy.js
+	sed -i "s/desp += author/\/\/desp += author/g" ./sendNotify.js
+	sed -i "/text = text.match/a   var fs = require('fs');fs.appendFile(\"./\" + \"${NOTIFY_CONF}name\", text + \"\\\n\", function(err) {if(err) {return console.log(err);}});fs.appendFile(\"./\" + \"${NOTIFY_CONF}\", desp + \"\\\n\", function(err) {if(err) {return console.log(err);}});\n  return" ./sendNotify.js
+	
+	echo "DECODE"
+	encode_str=(`cat ./${SCRIPT} | grep "window" | awk -F "window" '{print($1)}'| awk -F "var " '{print $(NF-1)}' | awk -F "=" '{print $1}' | sort -u`)
+	if [ -n "$encode_str" ]; then
+	    for ed in ${encode_str[*]}
+	    do
+	        sed -i "s/return $ed/if($ed.toLowerCase()==\"github\"){$ed=\"GOGOGOGO\"};return $ed/g" ./${SCRIPT}
+	    done
+	fi
 }
 
 # 格式化助力码到文本
 format_sc2txt(){
-    # $1 助力码文件
-    # $2 助力码文本生成位置
+# $1 助力码文件
+# $2 助力码文本生成位置
     sc_file=$1
     fsr_file=$2
     #${SCRIPT_NAME}.conf
@@ -96,6 +107,7 @@ format_sc2txt(){
     fi
 }
 
+# 添加助力码
 autoHelp(){
 # $1 脚本文件
 # $2 助力码文件所在
@@ -152,36 +164,35 @@ collectSharecode(){
     fi
 }
 
-cd ~/scripts
-modify_scripts
-
-echo "开始多账号并发"
-IFS=$'\n'
-
-format_sc2txt "${logDir}/ds/${SCRIPT_NAME}.log" "${logDir}/${SCRIPT_NAME}.conf"
-echo "修改cookie"
-sed -i 's/process.env.JD_COOKIE/process.env.JD_COOKIES/g' ./jdCookie.js
-JK_LIST=(`echo "$JD_COOKIE" | awk -F "&" '{for(i=1;i<=NF;i++) print $i}'`)
-
 # 任务函数
 task(){
     jk="$1"
     num=$2
-    [ ! -d ~/scripts${num} ] && cp  -rf ~/scripts ~/scripts${num}
-    cd ~/scripts${num}
+    [ ! -d ${SCRIPT_DIR}${num} ] && cp  -rf ${SCRIPT_DIR} ${SCRIPT_DIR}${num}
+    cd ${SCRIPT_DIR}${num}
     sed -i 's/let CookieJDs/let CookieJDss/g' ./jdCookie.js
     sed -i "1i\let CookieJDs = [ '$jk', ]" ./jdCookie.js
-    autoHelp "$SCRIPT" "${logDir}/${SCRIPT_NAME}.conf" $num
-    now=`date +%s%N` && delay=`echo "scale=3;$((nextdate-now))/1000000000" | bc`
-    ([ $nextdate -gt $now ] && echo "未到当天${timer}，等待${delay}秒" && sleep $delay; node ./$SCRIPT | grep -Ev "pt_pin|pt_key") &
-    
-  int_delay=`echo $delay | awk -F "." '{print $1}'`
-  (if [ $nextdate -gt $now ];then 
-    [ $((int_delay - 0)) -le 3600 ] && echo "未到当天${timer}，等待${delay}秒" && sleep $delay || echo "未到当天${timer}，但超出不远，继续运行"
-    node $SCRIPT | grep -Ev "pt_pin|pt_key"
-  fi
-)
-
+    autoHelp "$SCRIPT" "${home}/${SCRIPT_NAME}.conf" $num
+	
+	if [ -n "$SKD" -a "$SKD" != "delay" ]; then
+		DELAY=${DELAY:-0}
+		nextdate=`act_by_min $time`
+		now=`date +%s%N`
+		delay=`echo "scale=3;$((nextdate-now))/1000000000" | bc`
+		int_delay=`echo $delay | awk -F "." '{print $1}'`
+		if [ ! -n `echo "$SKD"|grep ":"` ]; then
+			now=`date +%s%N`
+			delay=`echo "scale=3;$((nextdate-now))/1000000000" | bc`
+			int_delay=`echo $delay | awk -F "." '{print $1}'`
+			if [ $nextdate -gt $now ];then 
+				[ $((int_delay - 0)) -le 300 ] && echo "未到当天${timer}，等待${delay}秒" && sleep $delay || echo "已过${timer}，但在五分钟内，继续运行"
+			fi
+		else
+			if [ $nextdate -gt $now ];then 
+				[ $((int_delay - 0)) -le 3600 ] && echo "未到当天${timer}，等待${delay}秒" && sleep $delay || echo "已过${timer}，但在一小时内，继续运行"
+			fi
+		fi		
+	fi
     (node ./${SCRIPT} | grep -Ev "pt_pin|pt_key") >&1 | tee "./${LOG}"
     collectSharecode "./${LOG}"
     cd -
@@ -192,116 +203,120 @@ task(){
     sleep ${delay}s
 }
 
-for jkl in `seq 1 ${#JK_LIST[*]}`
-do
-    task ${JK_LIST[$((jkl-1))]} $jkl &
-done
-echo "有账号" ${#JK_LIST[*]}
-unset IFS
+# 主函数
+main(){
+	modify_scripts
 
-wait
+	echo "开始多账号并发"
+	IFS=$'\n'
+
+	format_sc2txt "${SHCD_DIR}/${SCRIPT_NAME}.log" "${home}/${SCRIPT_NAME}.conf"
+	echo "修改cookie"
+	cp -f ./jdCookie.js ./jdCookie.bk.js
+	sed -i 's/process.env.JD_COOKIE/process.env.JD_COOKIES/g' ./jdCookie.js
+	# 兼容 换行 和 & 分割cookie
+	if [ -n `echo "$JD_COOKIE" | grep "&"` ]; then
+		JK_LIST=(`echo "$JD_COOKIE" | awk -F "&" '{for(i=1;i<=NF;i++) print $i}'`)
+	else
+		JK_LIST=(`echo "$JD_COOKIE" | awk -F "$" '{for(i=1;i<=NF;i++){{if(length($i)!=0) print $i}}'`)
+	fi
+	for jkl in `seq 1 ${#JK_LIST[*]}`
+	do
+		task ${JK_LIST[$((jkl-1))]} $jkl &
+	done
+	echo "有账号" ${#JK_LIST[*]}
+	unset IFS
+
+	wait
+	
+	# 清空文件
+	rm -f ${home}/${NOTIFY_CONF}*
+	rm -f ${home}/${LOG}
+	# 整合推送消息和助力码
+	for n in `seq 1 ${#JK_LIST[*]}`
+	do
+		cd ${SCRIPT_DIR}${n}
+		[ -e "./${LOG}1" ] && cat ./${LOG}1  | sed  "s/账号[0-9]/账号$n/g" | sed "s/京东号 [0-9]/京东号$n/g" >> ${home}/${LOG}
+		if [ -e "./${NOTIFY_CONF}" ]; then
+			echo "" >> ${home}/${NOTIFY_CONF}
+			echo "" >> ${home}/${NOTIFY_CONF}name
+			if [ $(specify_send ./${NOTIFY_CONF}) -eq 0 ];then
+				cat ./${NOTIFY_CONF} | sed "s/账号[0-9]/账号$n/g" | sed "s/京东号 [0-9]/京东号$n/g" >> ${home}/${NOTIFY_CONF}
+			else
+				cat ./${NOTIFY_CONF} | sed "s/账号[0-9]/账号$n/g" | sed "s/京东号 [0-9]/京东号$n/g" >> ${home}/${NOTIFY_CONF}spec
+			fi
+			[ ! -s "${home}/${NOTIFY_CONF}name" ] && cat ./${NOTIFY_CONF}name > ${home}/${NOTIFY_CONF}name 
+			# 清空文件
+			rm -f ./${NOTIFY_CONF}
+		fi
+	done
+
+	cd ${SCRIPT_DIR}
+	echo "推送消息"
+	cp -f ./sendNotify_diy.js ./sendNotify.js
+	sed -i 's/text}\\n\\n/text}\\n/g' ./sendNotify.js
+	sed -i 's/\\n\\n本脚本/\\n本脚本/g' ./sendNotify.js
+	sed -i  "s/text = text.match/\/\/text = text.match/g" ./sendNotify.js
+
+	if [ -e ${home}/${NOTIFY_CONF} -a -s ${home}/${NOTIFY_CONF} ]; then
+		blank_lines2blank_line ${home}/${NOTIFY_CONF}
+		blank_lines2blank_line ${home}/${NOTIFY_CONF}name
+		node ./run_sendNotify.js
+	fi
+	# 特殊推送
+	if [ -e ${home}/${NOTIFY_CONF}spec -a -s ${home}/${NOTIFY_CONF}spec ]; then
+		blank_lines2blank_line ${home}/${NOTIFY_CONF}spec
+		sed -i "s/process.env.DD_BOT_TOKEN/process.env.DD_BOT_TOKEN_SPEC/g" ./sendNotify.js
+		sed -i "s/process.env.DD_BOT_SECRET/process.env.DD_BOT_SECRET_SPEC/g" ./sendNotify.js
+		node ./run_sendNotify_spec.js
+	fi
+	# 恢复原文件
+	cp -f ./sendNotify_diy.js ./sendNotify.js
+	cp -f ./jdCookie.bk.js ./jdCookie.js
+	
+	upload_code "${SHCD_DIR}" ${home}/${LOG} ./${LOG}
+}
 
 # 清除连续空行为一行和首尾空行
 blank_lines2blank_line(){
-    # $1: 文件名
+	# $1: 文件名
     # 删除连续空行为一行
-    sed -i '/^$/{N;/\n$/d}' $1
+    cat -s $1 > $1.bk
+    mv -f $1.bk $1
     #清除文首文末空行
-    [ "$(cat ~/${NOTIFY_CONF} | head -n 1)"x = ""x ] && sed -i '1d' $1
-    [ "$(cat ~/${NOTIFY_CONF} | tail -n 1)"x = ""x ] && sed -i '$d' $1
+    [ "$(cat $1 | head -n 1)"x = ""x ] && sed -i '1d' $1
+    [ "$(cat $1 | tail -n 1)"x = ""x ] && sed -i '$d' $1
 }
 
 # 判断是否需要特别推送
 specify_send(){
-  ret=`cat $1 | grep "提醒\|已超时\|已可兑换"`
+  ret=`cat $1 | grep "提醒\|已超时\|已可兑换\|已失效"`
   [ -n "$ret" ] && echo 1 || echo 0
 }
 
-# 清空文件
-rm -f ~/${NOTIFY_CONF}*
-rm -f ~/${LOG}
-# 整合推送消息和助力码
-for n in `seq 1 ${#JK_LIST[*]}`
-do
-    cd ~/scripts${n}
-    [ -e "./${LOG}1" ] && cat ./${LOG}1  | sed "s/账号[0-9]/账号$n/g" >> ~/${LOG}
-    if [ -e "./${NOTIFY_CONF}" ]; then
-        echo "" >> ~/${NOTIFY_CONF}
-        echo "" >> ~/${NOTIFY_CONF}name
-        if [ $(specify_send ./${NOTIFY_CONF}) -eq 0 ];then
-            cat ./${NOTIFY_CONF}  | tail -n +2 | sed "s/账号[0-9]/账号$n/g" >> ~/${NOTIFY_CONF}
-        else
-            cat ./${NOTIFY_CONF}  | tail -n +2 | sed "s/账号[0-9]/账号$n/g" >> ~/${NOTIFY_CONF}spec
-        fi
-        [ ! -s "~/${NOTIFY_CONF}name" ] && cat ./${NOTIFY_CONF} | head -n 1 > ~/${NOTIFY_CONF}name 
-    fi
-    
-    # 清空文件
-    rm -f ./${NOTIFY_CONF}
-done
-
-cd ~/scripts
-echo "推送消息"
-if [ -e ~/${NOTIFY_CONF} ]; then
-    blank_lines2blank_line ~/${NOTIFY_CONF}
-    blank_lines2blank_line ~/${NOTIFY_CONF}name
-    cp -f ./sendNotify_diy.js ./sendNotify.js
-    sed -ie 's/text}\\n\\n/text}\\n/g' 's/\\n\\n本脚本/\\n本脚本/g' "s/text = text.match/\/\/text = text.match/g" ./sendNotify.js
-    node ./run_sendNotify.js
-fi
-# 特殊推送
-if [ -e ~/${NOTIFY_CONF}spec ]; then
-    blank_lines2blank_line ~/${NOTIFY_CONF}spec
-    cp -f ./sendNotify_diy.js ./sendNotify.js
-    sed -ie 's/text}\\n\\n/text}\\n/g' 's/\\n\\n本脚本/\\n本脚本/g' "s/text = text.match/\/\/text = text.match/g" ./sendNotify.js
-    sed -i "s/process.env.DD_BOT_TOKEN/process.env.DD_BOT_TOKEN_SPEC/g" ./sendNotify.js
-    sed -i "s/process.env.DD_BOT_SECRET/process.env.DD_BOT_SECRET_SPEC/g" ./sendNotify.js
-    node ./run_sendNotify_spec.js
-fi
-# 恢复原文件
-cp -f ./sendNotify_diy.js ./sendNotify.js
-
-# 上传助力码文件
+# 上传助力码
 upload_code(){
-    echo "上传助力码文件"
-    cd ~/ds
-    echo "拉取最新源码"
-    git config --global user.email "tracefish@qq.com"
-    git config --global user.name "tracefish"
-    git pull origin "$REPO_BRANCH:$REPO_BRANCH"
+# $1：克隆仓库目录
+# $2：助力码文件
+# $3：仓库本地助力码文件
+	[ ! -e $2 ] && echo "退出脚本" && exit 0
 
-    echo "Resetting origin to: https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY"
-    sudo git remote set-url origin "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY"
-
-    echo "强制覆盖原文件"
-    mv -v ~/${LOG} ./${LOG}
-    git add .
-    git commit -m "update ${SCRIPT_NAME} `date +%Y%m%d%H%M%S`" 2>/dev/null
-
-    echo "Pushing changings from tmp_upstream to origin"
-    sudo git push origin "$REPO_BRANCH:$REPO_BRANCH" --force
+	echo "上传助力码文件"
+	cd $1
+	echo "拉取最新源码"
+	git config --global user.email "tracefish@qq.com"
+	git config --global user.name "tracefish"
+	git pull origin "$REPO_BRANCH:$REPO_BRANCH"
+	
+	echo "Resetting origin to: https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY"
+	sudo git remote set-url origin "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY"
+	
+	echo "强制覆盖原文件"
+	mv -v $2 $3
+	git add .
+	git commit -m "update ${SCRIPT_NAME} `date +%Y%m%d%H%M%S`" 2>/dev/null
+	
+	echo "Pushing changings from tmp_upstream to origin"
+	sudo git push origin "$REPO_BRANCH:$REPO_BRANCH" --force
 }
-
-[ ! -e ~/${LOG} ] && echo "退出脚本" && exit 0
-cat ~/${LOG}
-upload_code
-
-case $2 in
-    "-t")
-        echo "直接指定时间定时"
-        timer=${3:-00:00:00}
-        ;;
-    "-m")
-        echo "指定分钟数定时"
-        timer=act_by_min ${3}
-        ;;    
-    "-o")
-        echo "逐个执行"
-        ;;
-    "-h")
-        echo "帮助"
-        ;;
-    "*")
-        echo "只并行"
-        ;; 
-esac
+main 
