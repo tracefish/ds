@@ -7,7 +7,7 @@
 # 通过 `test.sh jd.js delay 2` 指定延迟时间
 # `test.sh jd.js 00:00:12 2` 通过时间，指定脚本 运行时间 和 延迟时间（默认为0）
 # `test.sh jd.js 12 2` 通过分钟（小于等于十分钟，需要设置定时在上一个小时触发），指定脚本 运行时间 和 延迟时间（默认为0）
-# 版本：v2.6
+# 版本：v2.65
 
 # set -e
 SCRIPT="$1"
@@ -83,6 +83,7 @@ format_sc2txt(){
     sc_file=$1
     fsr_file=$2
     #${SCRIPT_NAME}.conf
+    [ ! -e "$sc_file" ] && return 0
     sc_list=(`cat "$sc_file" | while read LINE; do echo $LINE; done | awk -F "】" '{print $2}'`)
     for e in `seq 1 ${#sc_list[*]}`
     do 
