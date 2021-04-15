@@ -7,7 +7,7 @@
 # 通过 `test.sh jd.js delay 2` 指定延迟时间
 # `test.sh jd.js 00:00:12 2` 通过时间，指定脚本 运行时间 和 延迟时间（默认为0）
 # `test.sh jd.js 12 2` 通过分钟（小于等于十分钟，需要设置定时在上一个小时触发），指定脚本 运行时间 和 延迟时间（默认为0）
-# 版本：v2.4
+# 版本：v2.5
 
 # set -e
 SCRIPT="$1"
@@ -55,7 +55,7 @@ modify_scripts(){
     	echo "下载脚本"
 	    curl "$SYNCURL" > ./${SCRIPT}
     	# 外链脚本替换
-	    sed -i "s/indexOf('GITHUB')/indexOf('GOGOGOGO')/g" `ls -l | grep -v ^d | awk '{print $9}'`
+	sed -i "s/indexOf('GITHUB')/indexOf('GOGOGOGO')/g" `ls -l | grep -v ^d | awk '{print $9}'`
     	sed -i 's/indexOf("GITHUB")/indexOf("GOGOGOGO")/g' `ls -l | grep -v ^d | awk '{print $9}'`
 	fi
 	[ ! -e "./$1" ] && echo "脚本不存在" && exit 0
@@ -94,7 +94,11 @@ format_sc2txt(){
             echo ${sc_list[*]:0} | awk '{for(i=1;i<=NF;i++) {if(i==NF) print $i;else printf $i"@"}}' >> $fsr_file
         fi
     done
-    JK_LIST=(`echo "$JD_COOKIE" | awk -F "&" '{for(i=1;i<=NF;i++) print $i}'`)
+    if [ -n `echo "$JD_COOKIE" | grep "&"` ]; then
+	JK_LIST=(`echo "$JD_COOKIE" | awk -F "&" '{for(i=1;i<=NF;i++) print $i}'`)
+    else
+	JK_LIST=(`echo "$JD_COOKIE" | awk -F "$" '{for(i=1;i<=NF;i++){{if(length($i)!=0) print $i}}'`)
+    fi
     if [ -n "$JK_LIST" ]; then
         diff=$((${#JK_LIST[*]}-${#sc_list[*]}))
         for e in `seq 1 $diff`
