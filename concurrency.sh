@@ -7,7 +7,7 @@
 # 通过 `test.sh jd.js delay 2` 指定延迟时间
 # `test.sh jd.js 00:00:12 2` 通过时间，指定脚本 运行时间 和 延迟时间（默认为0）
 #  `test.sh jd.js 12 2` 通过分钟（小于等于十分钟，需要设置定时在上一个小时触发），指定脚本 运行时间 和 延迟时间（默认为0）
-# 版本：v2.1
+# 版本：v2.2
 
 # set -e
 SCRIPT="$1"
@@ -247,7 +247,7 @@ main(){
 			fi
 			[ ! -e "${home}/${NOTIFY_CONF}name" ] && cat ./${NOTIFY_CONF}name > ${home}/${NOTIFY_CONF}name 
 			# 清空文件
-			rm -f ./${NOTIFY_CONF}
+			rm -f ./${NOTIFY_CONF}*
 		fi
 	done
 
