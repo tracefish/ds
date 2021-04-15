@@ -7,7 +7,7 @@
 # 通过 `test.sh jd.js delay 2` 指定延迟时间
 # `test.sh jd.js 00:00:12 2` 通过时间，指定脚本 运行时间 和 延迟时间（默认为0）
 # `test.sh jd.js 12 2` 通过分钟（小于等于十分钟，需要设置定时在上一个小时触发），指定脚本 运行时间 和 延迟时间（默认为0）
-# 版本：v2.65
+# 版本：v2.66
 
 # set -e
 SCRIPT="$1"
@@ -53,12 +53,12 @@ modify_scripts(){
 
 	if [ -n "$SYNCURL" ]; then
     	echo "下载脚本"
-	    curl "$SYNCURL" > ./${SCRIPT}
+	curl "$SYNCURL" > ./${SCRIPT}
     	# 外链脚本替换
 	sed -i "s/indexOf('GITHUB')/indexOf('GOGOGOGO')/g" `ls -l | grep -v ^d | awk '{print $9}'`
     	sed -i 's/indexOf("GITHUB")/indexOf("GOGOGOGO")/g' `ls -l | grep -v ^d | awk '{print $9}'`
 	fi
-	[ ! -e "./$1" ] && echo "脚本不存在" && exit 0
+	[ ! -e "./$SCRIPT" ] && echo "脚本不存在" && exit 0
 	
 	echo "修改发送方式"
 	if [ -n "$DD_BOT_TOKEN_SPEC" -a -n "$DD_BOT_SECRET_SPEC" ]; then
