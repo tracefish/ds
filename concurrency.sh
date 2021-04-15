@@ -61,10 +61,11 @@ modify_scripts(){
 	[ ! -e "./$1" ] && echo "脚本不存在" && exit 0
 	
 	echo "修改发送方式"
-	cp -f ./sendNotify.js ./sendNotify_diy.js
-	sed -i "s/desp += author/\/\/desp += author/g" ./sendNotify.js
-	sed -i "/text = text.match/a   var fs = require('fs');fs.appendFile(\"./\" + \"${NOTIFY_CONF}name\", text + \"\\\n\", function(err) {if(err) {return console.log(err);}});fs.appendFile(\"./\" + \"${NOTIFY_CONF}\", desp + \"\\\n\", function(err) {if(err) {return console.log(err);}});\n  return" ./sendNotify.js
-	
+	if [ -n "$DD_BOT_TOKEN_SPEC" -a -n "$DD_BOT_SECRET_SPEC" ]; then
+	    cp -f ./sendNotify.js ./sendNotify_diy.js
+	    sed -i "s/desp += author/\/\/desp += author/g" ./sendNotify.js
+	    sed -i "/text = text.match/a   var fs = require('fs');fs.appendFile(\"./\" + \"${NOTIFY_CONF}name\", text + \"\\\n\", function(err) {if(err) {return console.log(err);}});fs.appendFile(\"./\" + \"${NOTIFY_CONF}\", desp + \"\\\n\", function(err) {if(err) {return console.log(err);}});\n  return" ./sendNotify.js
+	fi
 	echo "DECODE"
 	encode_str=(`cat ./${SCRIPT} | grep "window" | awk -F "window" '{print($1)}'| awk -F "var " '{print $(NF-1)}' | awk -F "=" '{print $1}' | sort -u`)
 	if [ -n "$encode_str" ]; then
@@ -258,25 +259,29 @@ main(){
 
 	cd ${SCRIPT_DIR}
 	echo "推送消息"
-	cp -f ./sendNotify_diy.js ./sendNotify.js
-	sed -i 's/text}\\n\\n/text}\\n/g' ./sendNotify.js
-	sed -i 's/\\n\\n本脚本/\\n本脚本/g' ./sendNotify.js
-	sed -i  "s/text = text.match/\/\/text = text.match/g" ./sendNotify.js
+	if [ -n "$DD_BOT_TOKEN_SPEC" -a -n "$DD_BOT_SECRET_SPEC" ]; then
+		cp -f ./sendNotify_diy.js ./sendNotify.js
+		sed -i 's/text}\\n\\n/text}\\n/g' ./sendNotify.js
+		sed -i 's/\\n\\n本脚本/\\n本脚本/g' ./sendNotify.js
+		sed -i  "s/text = text.match/\/\/text = text.match/g" ./sendNotify.js
 
-	if [ -e ${home}/${NOTIFY_CONF} -a -n `cat ${home}/${NOTIFY_CONF} | sed '/^$/d'` ]; then
-		blank_lines2blank_line ${home}/${NOTIFY_CONF}
-		blank_lines2blank_line ${home}/${NOTIFY_CONF}name
-		node ./run_sendNotify.js
+		if [ -e ${home}/${NOTIFY_CONF} -a -n `cat ${home}/${NOTIFY_CONF} | sed '/^$/d'` ]; then
+			blank_lines2blank_line ${home}/${NOTIFY_CONF}
+			blank_lines2blank_line ${home}/${NOTIFY_CONF}name
+			node ./run_sendNotify.js
+		fi
+		# 特殊推送
+		if [ -e ${home}/${NOTIFY_CONF}spec -a -n `cat ${home}/${NOTIFY_CONF}spec | sed '/^$/d'` ]; then
+			blank_lines2blank_line ${home}/${NOTIFY_CONF}spec
+			sed -i "s/process.env.DD_BOT_TOKEN/process.env.DD_BOT_TOKEN_SPEC/g" ./sendNotify.js
+			sed -i "s/process.env.DD_BOT_SECRET/process.env.DD_BOT_SECRET_SPEC/g" ./sendNotify.js
+			node ./run_sendNotify_spec.js
+		fi
+		# 恢复原文件
+		cp -f ./sendNotify_diy.js ./sendNotify.js
 	fi
-	# 特殊推送
-	if [ -e ${home}/${NOTIFY_CONF}spec -a -n `cat ${home}/${NOTIFY_CONF}spec | sed '/^$/d'` ]; then
-		blank_lines2blank_line ${home}/${NOTIFY_CONF}spec
-		sed -i "s/process.env.DD_BOT_TOKEN/process.env.DD_BOT_TOKEN_SPEC/g" ./sendNotify.js
-		sed -i "s/process.env.DD_BOT_SECRET/process.env.DD_BOT_SECRET_SPEC/g" ./sendNotify.js
-		node ./run_sendNotify_spec.js
-	fi
+	
 	# 恢复原文件
-	cp -f ./sendNotify_diy.js ./sendNotify.js
 	cp -f ./jdCookie.bk.js ./jdCookie.js
 	
 	upload_code "${SHCD_DIR}" ${home}/${LOG} ./${LOG}
