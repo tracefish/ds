@@ -1,5 +1,5 @@
 #!/bin/bash
-# Version: v1.1
+# Version: v1.2
 # 
 
 SCRIPT="$1"
@@ -163,13 +163,13 @@ main(){
 		sed -i 's/\\n\\n本脚本/\\n本脚本/g' ./sendNotify.js
 		sed -i  "s/text = text.match/\/\/text = text.match/g" ./sendNotify.js
 
-		if [ -e ./${NOTIFY_CONF} -a -n `cat ${home}/${NOTIFY_CONF} | sed '/^$/d'` ]; then
+		if [ -e ./${NOTIFY_CONF} -a -n `cat ./${NOTIFY_CONF} | sed '/^$/d'` ]; then
 			blank_lines2blank_line ./${NOTIFY_CONF}
 			blank_lines2blank_line ./${NOTIFY_CONF}name
 			node ./run_sendNotify.js
 		fi
 		# 特殊推送
-		if [ -e ./${NOTIFY_CONF}spec -a -n `cat ${home}/${NOTIFY_CONF}spec | sed '/^$/d'` ]; then
+		if [ -e ./${NOTIFY_CONF}spec -a -n `cat ./${NOTIFY_CONF}spec | sed '/^$/d'` ]; then
 			blank_lines2blank_line ./${NOTIFY_CONF}spec
 			sed -i "s/process.env.DD_BOT_TOKEN/process.env.DD_BOT_TOKEN_SPEC/g" ./sendNotify.js
 			sed -i "s/process.env.DD_BOT_SECRET/process.env.DD_BOT_SECRET_SPEC/g" ./sendNotify.js
