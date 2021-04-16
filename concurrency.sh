@@ -7,7 +7,7 @@
 # 通过 `test.sh jd.js delay 2` 指定延迟时间
 # `test.sh jd.js 00:00:12 2` 通过时间，指定脚本 运行时间 和 延迟时间（默认为0）
 # `test.sh jd.js 12 2` 通过分钟（小于等于十分钟，需要设置定时在上一个小时触发），指定脚本 运行时间 和 延迟时间（默认为0）
-# 版本：v2.66
+# 版本：v2.67
 
 # set -e
 SCRIPT="$1"
@@ -236,9 +236,6 @@ main(){
 
 	wait
 	
-	# 清空文件
-	rm -f ${home}/${NOTIFY_CONF}*
-	rm -f ${home}/${LOG}
 	# 整合推送消息和助力码
 	for n in `seq 1 ${#JK_LIST[*]}`
 	do
@@ -255,6 +252,7 @@ main(){
 			[ ! -e "${home}/${NOTIFY_CONF}name" ] && cat ./${NOTIFY_CONF}name > ${home}/${NOTIFY_CONF}name 
 			# 清空文件
 			rm -f ./${NOTIFY_CONF}*
+			rm -f ./${NOTIFY_CONF}name
 		fi
 	done
 
@@ -282,10 +280,13 @@ main(){
 		cp -f ./sendNotify_diy.js ./sendNotify.js
 	fi
 	
-	# 恢复原文件
-	cp -f ./jdCookie.bk.js ./jdCookie.js
-	
 	upload_code "${SHCD_DIR}" ${home}/${LOG} ./${LOG}
+	
+	# 恢复原文件
+	cp -f ${home}/jdCookie.bk.js ${home}/jdCookie.js
+	# 清空文件
+	rm -f ${home}/${NOTIFY_CONF}*
+	rm -f ${home}/${LOG}
 }
 
 # 清除连续空行为一行和首尾空行
@@ -310,7 +311,7 @@ upload_code(){
 # $1：克隆仓库目录
 # $2：助力码文件
 # $3：仓库本地助力码文件
-	[ ! -e $2 -o -z "$GITHUB_TOKEN" ] && echo "退出脚本" && exit 0
+	[ ! -e $2 -o -z "$GITHUB_TOKEN" ] && echo "退出脚本" && return 0
 
 	echo "上传助力码文件"
 	cd $1
