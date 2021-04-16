@@ -7,7 +7,7 @@
 # 通过 `test.sh jd.js delay 2` 指定延迟时间
 # `test.sh jd.js 00:00:12 2` 通过时间，指定脚本 运行时间 和 延迟时间（默认为0）
 # `test.sh jd.js 12 2` 通过分钟（小于等于十分钟，需要设置定时在上一个小时触发），指定脚本 运行时间 和 延迟时间（默认为0）
-# 版本：v2.67
+# 版本：v2.7
 
 # set -e
 SCRIPT="$1"
@@ -33,16 +33,16 @@ SCRIPT_DIR="${home}/scripts"
 act_by_min(){
     min=${1}
     # 设置时区
-    sudo rm -f /etc/localtime
-    sudo ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-	if [ ! -n `echo $min | grep ":"` ]; then
-		hour=`date +%H`
-		if [ $min -le 10 ]; then
-			hour=$((hour + 1))
-			[ "$hour" = "24" ] && hour="00"
-		fi
-		timer="${hour}:${min}:00"
+    # sudo rm -f /etc/localtime
+    # sudo ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+    if [ ! -n `echo $min | grep ":"` ]; then
+	hour=`date +%H`
+	if [ $min -le 10 ]; then
+		hour=$((hour + 1))
+		[ "$hour" = "24" ] && hour="00"
 	fi
+	timer="${hour}:${min}:00"
+    fi
     [ "$timer" = "00:00:00" ] && nextdate=`date +%s%N -d "+1 day $timer"` || nextdate=`date +%s%N -d "$timer"`
     echo $timer
 }
