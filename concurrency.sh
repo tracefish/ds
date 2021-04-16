@@ -32,9 +32,6 @@ SCRIPT_DIR="${home}/scripts"
 # 准点触发
 act_by_min(){
     min=${1}
-    # 设置时区
-    # sudo rm -f /etc/localtime
-    # sudo ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
     if [ ! -n `echo $min | grep ":"` ]; then
 	hour=`date +%H`
 	if [ $min -le 10 ]; then
@@ -213,7 +210,10 @@ task(){
 main(){
 	[ -z "$SCRIPT" ] && echo "参数错误，需指定要运行的脚本"
 	modify_scripts
-
+# 设置时区
+	sudo rm -f /etc/localtime
+	sudo ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+    
 	echo "开始多账号并发"
 	IFS=$'\n'
 
