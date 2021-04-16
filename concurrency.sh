@@ -7,7 +7,7 @@
 # 通过 `test.sh jd.js delay 2` 指定延迟时间
 # `test.sh jd.js 00:00:12 2` 通过时间，指定脚本 运行时间 和 延迟时间（默认为0）
 # `test.sh jd.js 12 2` 通过分钟（小于等于十分钟，需要设置定时在上一个小时触发），指定脚本 运行时间 和 延迟时间（默认为0）
-# 版本：v2.71
+# 版本：v2.80
 
 # set -e
 SCRIPT="$1"
@@ -218,7 +218,9 @@ main(){
 	IFS=$'\n'
 
 	format_sc2txt "${SHCD_DIR}/${SCRIPT_NAME}.log" "${home}/${SCRIPT_NAME}.conf"
+	
 	echo "修改cookie"
+	cd ${SCRIPT_DIR}
 	cp -f ./jdCookie.js ./jdCookie.bk.js
 	sed -i 's/process.env.JD_COOKIE/process.env.JD_COOKIES/g' ./jdCookie.js
 	# 兼容 换行 和 & 分割cookie
@@ -264,13 +266,13 @@ main(){
 		sed -i 's/\\n\\n本脚本/\\n本脚本/g' ./sendNotify.js
 		sed -i  "s/text = text.match/\/\/text = text.match/g" ./sendNotify.js
 
-		if [ -e ${home}/${NOTIFY_CONF} -a -n `cat ${home}/${NOTIFY_CONF} | sed '/^$/d'` ]; then
+		if [ -e ${home}/${NOTIFY_CONF} -a -n "$(cat ${home}/${NOTIFY_CONF} | sed '/^$/d')" ]; then
 			blank_lines2blank_line ${home}/${NOTIFY_CONF}
 			blank_lines2blank_line ${home}/${NOTIFY_CONF}name
 			node ./run_sendNotify.js
 		fi
 		# 特殊推送
-		if [ -e ${home}/${NOTIFY_CONF}spec -a -n `cat ${home}/${NOTIFY_CONF}spec | sed '/^$/d'` ]; then
+		if [ -e ${home}/${NOTIFY_CONF}spec -a -n "$(cat ${home}/${NOTIFY_CONF}spec | sed '/^$/d')" ]; then
 			blank_lines2blank_line ${home}/${NOTIFY_CONF}spec
 			sed -i "s/process.env.DD_BOT_TOKEN/process.env.DD_BOT_TOKEN_SPEC/g" ./sendNotify.js
 			sed -i "s/process.env.DD_BOT_SECRET/process.env.DD_BOT_SECRET_SPEC/g" ./sendNotify.js
@@ -283,7 +285,7 @@ main(){
 	upload_code "${SHCD_DIR}" ${home}/${LOG} ./${LOG}
 	
 	# 恢复原文件
-	cp -f ${home}/jdCookie.bk.js ${home}/jdCookie.js
+	cp -f ${SCRIPT_DIR}/jdCookie.bk.js ${SCRIPT_DIR}/jdCookie.js
 	# 清空文件
 	rm -f ${home}/${NOTIFY_CONF}*
 	rm -f ${home}/${LOG}
@@ -302,7 +304,7 @@ blank_lines2blank_line(){
 
 # 判断是否需要特别推送
 specify_send(){
-  ret=`cat $1 | grep "提醒\|已超时\|已可兑换\|已失效"`
+  ret=`cat $1 | grep "提醒\|已超时\|已可兑换\|已失效\|重新登录"`
   [ -n "$ret" ] && echo 1 || echo 0
 }
 
