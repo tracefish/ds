@@ -22,6 +22,7 @@ SCRIPT_DIR="${home}/scripts"
 autoHelp(){
 # $1 脚本文件
 # $2 助力码文件所在
+    cd ${SCRIPT_DIR}
     sr_file=$1
     sc_file=$2
     sc_list=(`cat "$sc_file" | while read LINE; do echo $LINE; done | awk -F "】" '{print $2}'`)
@@ -142,7 +143,7 @@ main(){
 	[ ! -e "./$SCRIPT" ] && echo "脚本不存在" && exit 0
 
 	echo "替换助力码"
-	[ -e "${SCRIPT_DIR}/${SCRIPT_NAME}.log" ] && autoHelp "${SCRIPT}" "${SCRIPT_DIR}/${SCRIPT_NAME}.log"
+	[ -e "${SHCD_DIR}/${SCRIPT_NAME}.log" ] && autoHelp "${SCRIPT}" "${SHCD_DIR}/${SCRIPT_NAME}.log"
 
 	echo "DECODE"
 	encode_str=(`cat ./${SCRIPT} | grep "window" | awk -F "window" '{print($1)}'| awk -F "var " '{print $(NF-1)}' | awk -F "=" '{print $1}' | sort -u`)
