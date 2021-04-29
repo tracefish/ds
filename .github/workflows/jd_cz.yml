@@ -309,7 +309,7 @@ jobs:
           SYNCURL: "https://raw.githubusercontent.com/monk-coder/dust/dust/backup/z_asus_iqiyi.js"  
       - name: '运行 【创维408下班全勤奖】'
         run: |
-          bash ./concurrency.sh monk_skyworth.js
+          bash ./concurrency.sh z_tcl_liling_cart.js
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
           JD_COOKIE: ${{ secrets.JD_COOKIE }}
@@ -327,4 +327,4 @@ jobs:
           DD_BOT_TOKEN_SPEC: ${{ secrets.DD_BOT_TOKEN_SPEC }}
           DD_BOT_SECRET_SPEC: ${{ secrets.DD_BOT_SECRET_SPEC }}
           IGOT_PUSH_KEY: ${{ secrets.IGOT_PUSH_KEY }}
-          SYNCURL: "https://raw.githubusercontent.com/monk-coder/dust/dust/normal/monk_skyworth.js"
+          SYNCURL: "https://share.r2ray.com/dust/i-chenzhe/z_tcl_liling_cart.js"
