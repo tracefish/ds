@@ -153,6 +153,8 @@ jd_xg.js
 jd_xgyl.js
 jd_mh.js
 jd_super_box.js
+jd_jin_tie.js
+jd_tcl.js
 ```
 * jd_unsubscribe.yml
 ```
