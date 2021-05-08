@@ -6,7 +6,6 @@ jd_bean_change.js
 * jd_bean_sign.yml
 ```
 jd_bean_sign.js
-jd_car.js
 ```
 * jd_beauty.yml
 ```
@@ -18,6 +17,7 @@ jd_blueCoin.js
 jd_shop.js
 jd_club_lottery.js
 jd_jdzz.js
+jd_car.js
 ```
 * jd_bookshop.yml
 ```
@@ -110,6 +110,7 @@ jd_price.js
 jd_rankingList.js
 jd_wish.js
 jd_lotteryMachine.js
+jd_daily_lottery.js
 ```
 * jd_sgmh.yml
 ```
