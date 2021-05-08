@@ -90,9 +90,9 @@ jobs:
           DD_BOT_TOKEN_SPEC: ${{ secrets.DD_BOT_TOKEN_SPEC }}
           DD_BOT_SECRET_SPEC: ${{ secrets.DD_BOT_SECRET_SPEC }}
           IGOT_PUSH_KEY: ${{ secrets.IGOT_PUSH_KEY }}
-      - name: '运行 【汽车签到】'
+      - name: '运行 【每日抽奖】'
         run: |
-          bash ./run_scripts.sh jd_car.js
+          bash ./run_scripts.sh jd_daily_lottery.js
         env:
           JD_COOKIE: ${{ secrets.JD_COOKIE }}
           JD_DEBUG: ${{ secrets.JD_DEBUG }}
