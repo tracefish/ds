@@ -1,5 +1,5 @@
 #!/bin/bash
-# Version: v1.25
+# Version: v1.30
 # 
 
 SCRIPT="$1"
@@ -119,6 +119,17 @@ upload_code(){
 	
 	echo "Pushing changings from tmp_upstream to origin"
 	sudo git push origin "$REPO_BRANCH:$REPO_BRANCH" --force
+}
+
+# 清除连续空行为一行和首尾空行
+blank_lines2blank_line(){
+	# $1: 文件名
+    # 删除连续空行为一行
+    cat -s $1 > $1.bk
+    mv -f $1.bk $1
+    #清除文首文末空行
+    [ "$(cat $1 | head -n 1)"x = ""x ] && sed -i '1d' $1
+    [ "$(cat $1 | tail -n 1)"x = ""x ] && sed -i '$d' $1
 }
 
 # 主函数
