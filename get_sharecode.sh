@@ -1,4 +1,5 @@
 #!/bin/bash
+# 版本：v1.0
 
 #set -e
 SC_LOG="sharecode.log"
