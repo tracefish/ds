@@ -1,5 +1,5 @@
 #!/bin/bash
-# Version: v1.31
+# Version: v1.40
 # 
 
 SCRIPT="$1"
@@ -146,6 +146,24 @@ main(){
 	
 	echo "修改发送方式"
 	if [ -n "$DD_BOT_TOKEN_SPEC" -a -n "$DD_BOT_SECRET_SPEC" ]; then
+	#修改常规推送
+	cat > run_sendNotify.js <<EOF
+notify = require('./sendNotify');
+fs = require('fs');
+var data = fs.readFileSync('./${NOTIFY_CONF}');
+var name = fs.readFileSync('./${NOTIFY_CONF}name');
+
+notify.sendNotify(name, data.toString());
+EOF
+	#修改特别推送
+	cat > run_sendNotify_spec.js <<EOT
+notify = require('./sendNotify');
+fs = require('fs');
+var data = fs.readFileSync('./${NOTIFY_CONF}spec');
+var name = fs.readFileSync('./${NOTIFY_CONF}name');
+
+notify.sendNotify(name, data.toString());
+EOT
 	    cp -f ./sendNotify.js ./sendNotify_diy.js
 	    sed -i "s/desp += author/\/\/desp += author/g" ./sendNotify.js
 	    sed -i "/text = text.match/a   var fs = require('fs');fs.appendFile(\"./\" + \"${NOTIFY_CONF}name\", text + \"\\\n\", function(err) {if(err) {return console.log(err);}});fs.appendFile(\"./\" + \"${NOTIFY_CONF}\", desp + \"\\\n\", function(err) {if(err) {return console.log(err);}});\n  return" ./sendNotify.js
@@ -176,13 +194,13 @@ main(){
 		sed -i  "s/text = text.match/\/\/text = text.match/g" ./sendNotify.js
 
 		if [ -e ./${NOTIFY_CONF} -a -n "$(cat ./${NOTIFY_CONF} | sed '/^$/d')" ]; then
-			blank_lines2blank_line  ${home}/${NOTIFY_CONF}
-			blank_lines2blank_line  ${home}/${NOTIFY_CONF}name
+			blank_lines2blank_line  ./${NOTIFY_CONF}
+			blank_lines2blank_line  ./${NOTIFY_CONF}name
 			node ./run_sendNotify.js
 		fi
 		# 特殊推送
 		if [ -e ./${NOTIFY_CONF}spec -a -n "$(cat ./${NOTIFY_CONF}spec | sed '/^$/d')" ]; then
-			blank_lines2blank_line  ${home}/${NOTIFY_CONF}spec
+			blank_lines2blank_line  ./${NOTIFY_CONF}spec
 			sed -i "s/process.env.DD_BOT_TOKEN/process.env.DD_BOT_TOKEN_SPEC/g" ./sendNotify.js
 			sed -i "s/process.env.DD_BOT_SECRET/process.env.DD_BOT_SECRET_SPEC/g" ./sendNotify.js
 			node ./run_sendNotify_spec.js
