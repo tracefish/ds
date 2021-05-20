@@ -139,6 +139,7 @@ jd_speed_sign.js
 ```
 jd_superMarket.js
 jd_health_collect.js
+jd_jump.js
 ```
 * jd_syj.yml
 ```
