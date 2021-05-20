@@ -40,6 +40,7 @@ jobs:
           git clone https://github.com/monk-coder/dust ./dust
           cp -Rf ./dust/normal/ ./
           scripts=(`ls ./dust/normal`)
+          echo $scripts
           for sctipt in ${scripts[*]}
           do
             echo $script
