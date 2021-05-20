@@ -39,6 +39,7 @@ jobs:
         run: |
           git clone https://github.com/monk-coder/dust ./dust
           cp -Rf ./dust/normal/ ./
+          ls ./dust/normal
           for sctipt in `ls ./dust/normal`
           do
             echo $script
