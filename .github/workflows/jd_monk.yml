@@ -39,10 +39,9 @@ jobs:
         run: |
           git clone https://github.com/monk-coder/dust ~/dust
           cp -Rf ~/dust/normal/ ./
-          ls ./
           for sctipt in `ls ~/dust/normal`
           do
-            ls $script
+            echo $script
             bash ./concurrency.sh $sctipt
           done
         env:
