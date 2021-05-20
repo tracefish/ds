@@ -39,7 +39,7 @@ jobs:
         run: |
           git clone https://github.com/monk-coder/dust ./dust
           cp -Rf ./dust/normal/* ./
-          ls ./
+          echo $(pwd)
           scripts=(`ls ./dust/normal`)
           for script in ${scripts[*]}
           do
