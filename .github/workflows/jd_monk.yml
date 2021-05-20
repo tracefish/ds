@@ -41,10 +41,10 @@ jobs:
           cp -Rf ./dust/normal/ ./
           scripts=(`ls ./dust/normal`)
           echo $scripts
-          for sctipt in ${scripts[*]}
+          for script in ${scripts[*]}
           do
             echo $script
-            bash ./concurrency.sh $sctipt
+            bash ./concurrency.sh $script
           done
         env:
           JD_COOKIE: ${{ secrets.JD_COOKIE }}
