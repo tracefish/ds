@@ -38,7 +38,7 @@ jobs:
       - name: '运行 【和尚脚本】'
         run: |
           git clone https://github.com/monk-coder/dust ~/dust
-          cp -Rf ~/dust/normal ./
+          cp -Rf ~/dust/normal/ ./
           ls ./
           for sctipt in `ls ~/dust/normal`
           do
