@@ -46,6 +46,7 @@ jobs:
           cd ${SCRIPT_DIR}/
           for script in ${scripts[*]}
           do
+            cat ./$script
             bash ./run_scripts.sh $script
           done
         env:
