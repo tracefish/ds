@@ -43,6 +43,7 @@ jobs:
           git clone https://github.com/monk-coder/dust ${home}/dust
           cp -Rf ${home}/dust/normal/* ${SCRIPT_DIR}/
           scripts=(`ls ${home}/dust/normal`)
+          cd ${SCRIPT_DIR}/
           for script in ${scripts[*]}
           do
             bash ./run_scripts.sh $script
