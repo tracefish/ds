@@ -37,16 +37,8 @@ jobs:
           cp -f update_env.sh ~/update_env.sh && chmod 755 ~/update_env.sh && ~/update_env.sh
       - name: '运行 【和尚脚本】'
         run: |
-          home=`echo ~`
-          # 脚本文件初始目录
-          SCRIPT_DIR="${home}/scripts"
-          git clone https://github.com/monk-coder/dust ${home}/dust
-          cp -Rf ${home}/dust/normal/* ${SCRIPT_DIR}/
-          scripts=(`ls ${home}/dust/normal`)
-          for script in ${scripts[*]}
-          do
-            bash ./run_scripts.sh $script
-          done
+
+          bash ./run_scripts.sh z_mother_jump.js
         env:
           JD_COOKIE: ${{ secrets.JD_COOKIE }}
           JD_DEBUG: ${{ secrets.JD_DEBUG }}
@@ -63,4 +55,4 @@ jobs:
           DD_BOT_TOKEN_SPEC: ${{ secrets.DD_BOT_TOKEN_SPEC }}
           DD_BOT_SECRET_SPEC: ${{ secrets.DD_BOT_SECRET_SPEC }}
           IGOT_PUSH_KEY: ${{ secrets.IGOT_PUSH_KEY }}
-   
+          SYNCURL: "https://raw.githubusercontent.com/monk-coder/dust/dust/normal/adolf_oppo.js"
