@@ -44,6 +44,9 @@ jobs:
           cp -Rf ${home}/dust/normal/* ${SCRIPT_DIR}/
           scripts=(`ls ${home}/dust/normal`)
           cd ${SCRIPT_DIR}/
+          echo "修改源码"
+          sed -i "s/indexOf('GITHUB')/indexOf('GOGOGOGO')/g" `ls -l |grep -v ^d|awk '{print $9}'`
+          sed -i 's/indexOf("GITHUB")/indexOf("GOGOGOGO")/g' `ls -l |grep -v ^d|awk '{print $9}'`
           for script in ${scripts[*]}
           do
             bash ./run_scripts.sh $script
