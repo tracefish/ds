@@ -45,7 +45,7 @@ jobs:
           scripts=(`ls ${home}/dust/normal`)
           for script in ${scripts[*]}
           do
-            bash ./concurrency.sh $script
+            bash ./run_sctipts.sh $script
           done
         env:
           JD_COOKIE: ${{ secrets.JD_COOKIE }}
