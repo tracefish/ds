@@ -1,5 +1,5 @@
 #!/bin/bash
-# Version: v2.0
+# Version: v2.01
 # 
 
 SCRIPT="$1"
@@ -59,7 +59,7 @@ autoHelp(){
 		unset sc_normal_list[0]
 		sc_normal_list=(${sc_normal_list[*]})
 	fi
-	final_sc_list=(${sc_vip_list[*]} ${${sc_normal_list[*]}[*]})
+	final_sc_list=(${sc_vip_list[*]} ${sc_normal_list[*]})
         f_shcode="$f_shcode""'""`echo ${final_sc_list[*]:0} | awk '{for(i=1;i<=NF;i++) {if(i==NF) printf $i;else printf $i"@"}}'`""',""\n"
     done
  
