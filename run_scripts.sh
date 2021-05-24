@@ -1,9 +1,10 @@
 #!/bin/bash
-# Version: v1.40
+# Version: v2.0
 # 
 
 SCRIPT="$1"
-
+# VIP人数，默认前面的人
+VIPS="10"
 SCRIPT_NAME=`echo "${1}" | awk -F "." '{print $1}'`
 LOG="${SCRIPT_NAME}.log"
 NOTIFY_CONF="dt.conf"
@@ -26,6 +27,9 @@ autoHelp(){
     sr_file=$1
     sc_file=$2
     sc_list=(`cat "$sc_file" | while read LINE; do echo $LINE; done | awk -F "】" '{print $2}'`)
+    sc_vip_list=(`echo ${sc_file[*]:0:VIPS}`)
+    nums_of_user=`echo ${#sc_list[*]}`
+    sc_normal_list=(`echo ${sc_file[*]:VIPS:nums_of_user}`)
     f_shcode=""
     IFS=$'\n'
 	if [ -n `echo "$JD_COOKIE" | grep "&"` ]; then
@@ -34,7 +38,7 @@ autoHelp(){
 		JK_LIST=(`echo "$JD_COOKIE" | awk -F "$" '{for(i=1;i<=NF;i++){{if(length($i)!=0) print $i}}'`)
 	fi
     if [ -n "$JK_LIST" ]; then
-        diff=$((${#JK_LIST[*]}-${#sc_list[*]}))
+        diff=$((${#JK_LIST[*]}-$nums_of_user))
         for e in `seq 1 $diff`
         do 
             sc_list+=(${sc_list[0]})
@@ -43,13 +47,22 @@ autoHelp(){
             f_shcode="$f_shcode""'""`echo ${sc_list[*]:0} | awk '{for(i=1;i<=NF;i++) {if(i==NF) printf $i;else printf $i"@"}}'`""',""\n"
         done
     fi
-    for e in `seq 1 ${#sc_list[*]}`
+    # 优先为vip用户助力
+    for e in `seq 1 $nums_of_user`
     do 
-        sc_list+=(${sc_list[0]})
-        unset sc_list[0]
-        sc_list=(${sc_list[*]})
-        f_shcode="$f_shcode""'""`echo ${sc_list[*]:0} | awk '{for(i=1;i<=NF;i++) {if(i==NF) printf $i;else printf $i"@"}}'`""',""\n"
+    	if [ $((VIPS-0)) - ge $e ]; then
+		sc_vip_list+=(${sc_vip_list[0]})
+		unset sc_vip_list[0]
+		sc_vip_list=(${sc_vip_list[*]})
+	else
+		sc_normal_list+=(${sc_normal_list[0]})
+		unset sc_normal_list[0]
+		sc_normal_list=(${sc_normal_list[*]})
+	fi
+	final_sc_list=(${sc_vip_list[*]} ${${sc_normal_list[*]}[*]})
+        f_shcode="$f_shcode""'""`echo ${final_sc_list[*]:0} | awk '{for(i=1;i<=NF;i++) {if(i==NF) printf $i;else printf $i"@"}}'`""',""\n"
     done
+ 
     unset IFS
     [ -n "$MY_SHARECODES" ] && f_shcode="$f_shcode""'$MY_SHARECODES',\n"
     sed -i "s/let shareCodes = \[/let shareCodes = \[\n${f_shcode}/g" "./$sr_file"
