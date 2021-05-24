@@ -1,5 +1,5 @@
 #!/bin/bash
-# Version: v2.03
+# Version: v2.10
 # 
 
 SCRIPT="$1"
@@ -27,9 +27,9 @@ autoHelp(){
     sr_file=$1
     sc_file=$2
     sc_list=(`cat "$sc_file" | while read LINE; do echo $LINE; done | awk -F "】" '{print $2}'`)
-    sc_vip_list=(`echo ${sc_file[*]:0:VIPS}`)
+    sc_vip_list=(`echo ${sc_list[*]:0:VIPS}`)
     nums_of_user=`echo ${#sc_list[*]}`
-    sc_normal_list=(`echo ${sc_file[*]:VIPS:nums_of_user}`)
+    sc_normal_list=(`echo ${sc_list[*]:VIPS:nums_of_user}`)
     f_shcode=""
     IFS=$'\n'
 	if [ -n `echo "$JD_COOKIE" | grep "&"` ]; then
