@@ -1,5 +1,5 @@
 #!/bin/bash
-# Version: v2.01
+# Version: v2.02
 # 
 
 SCRIPT="$1"
@@ -50,7 +50,7 @@ autoHelp(){
     # 优先为vip用户助力
     for e in `seq 1 $nums_of_user`
     do 
-    	if [ $((VIPS-0)) - ge $e ]; then
+    	if [ $((VIPS-0)) -ge $e ]; then
 		sc_vip_list+=(${sc_vip_list[0]})
 		unset sc_vip_list[0]
 		sc_vip_list=(${sc_vip_list[*]})
