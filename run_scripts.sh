@@ -103,7 +103,7 @@ collectSharecode(){
         [ -z "$code" ] && exit 0
         for i in `seq 0 $((${#name[*]}-1))`
         do 
-            echo "${name[i]}""${code[i]}" >> ./${LOG}1
+            [ -n "${code[i]}" ] && echo "${name[i]}""${code[i]}" >> ./${LOG}1
         done
     else
         echo $code | awk '{for(i=1;i<=NF;i++)print $i}' > ./${LOG}1
