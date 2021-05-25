@@ -7,7 +7,7 @@
 # 通过 `test.sh jd.js delay 2` 指定延迟时间
 # `test.sh jd.js 00:00:12 2` 通过时间，指定脚本 运行时间 和 延迟时间（默认为0）
 # `test.sh jd.js 12 2` 通过分钟（小于等于十分钟，需要设置定时在上一个小时触发），指定脚本 运行时间 和 延迟时间（默认为0）
-# 版本：v3.0
+# 版本：v3.01
 
 # set -e
 SCRIPT="$1"
@@ -169,8 +169,8 @@ collectSharecode(){
     if [ -z "$code" ]; then
         activity=`sed -n '/配置文件.*/'p "./${LOG}" | awk -F "获取" '{print $2}' | awk -F "配置" '{print $1}'`
         name=(`sed -n '/'【京东账号'.*/'p "./${LOG}" | grep "开始" | awk -F "开始" '{print $2}' |sed 's/】/（/g'| awk -v ac="$activity" -F "*" '{print $1"）" ac "好友助力码】"}'`)
-        code=(`sed -n '/'您的好友助力码为'.*/'p ${1} | awk '{print $2}'`)
-        [ -z "$code" ] && code=(`sed -n '/'好友助力码'.*/'p ${1} | awk -F "：" '{print $2}'`)
+        code=(`sed -n '/'您的好友助力码为'.*/'p ${1} | awk '{print $2}' | uniq`)
+        [ -z "$code" ] && code=(`sed -n '/'好友助力码'.*/'p ${1} | awk -F "：" '{print $2}' | uniq`)
         [ -z "$code" ] && exit 0
         for i in `seq 0 $((${#name[*]}-1))`
         do 
