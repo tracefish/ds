@@ -49,8 +49,7 @@ jobs:
           sed -i 's/indexOf("GITHUB")/indexOf("GOGOGOGO")/g' `ls -l |grep -v ^d|awk '{print $9}'`
           for script in ${scripts[*]}
           do
-            bash ./run_scripts.sh $script
-            wait
+          bash ./concurrency.sh $script
           done
         env:
           JD_COOKIE: ${{ secrets.JD_COOKIE }}
