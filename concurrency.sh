@@ -7,10 +7,12 @@
 # 通过 `test.sh jd.js delay 2` 指定延迟时间
 # `test.sh jd.js 00:00:12 2` 通过时间，指定脚本 运行时间 和 延迟时间（默认为0）
 # `test.sh jd.js 12 2` 通过分钟（小于等于十分钟，需要设置定时在上一个小时触发），指定脚本 运行时间 和 延迟时间（默认为0）
-# 版本：v2.82
+# 版本：v3.0
 
 # set -e
 SCRIPT="$1"
+# VIP人数，默认前面的人
+VIPS="10"
 SKD="$2"
 # 延迟时间设置
 DELAY="$3"
@@ -82,15 +84,26 @@ format_sc2txt(){
     #${SCRIPT_NAME}.conf
     [ ! -e "$sc_file" ] && return 0
     sc_list=(`cat "$sc_file" | while read LINE; do echo $LINE; done | awk -F "】" '{print $2}'`)
+    sc_vip_list=(`echo ${sc_list[*]:0:VIPS}`)
+    nums_of_user=`echo ${#sc_list[*]}`
+    sc_normal_list=(`echo ${sc_list[*]:VIPS:nums_of_user}`)
     for e in `seq 1 ${#sc_list[*]}`
     do 
-        sc_list+=(${sc_list[0]})
-        unset sc_list[0]
-        sc_list=(${sc_list[*]})
+	if [ $((VIPS-0)) -ge $e ]; then
+		sc_vip_list+=(${sc_vip_list[0]})
+		unset sc_vip_list[0]
+		sc_vip_list=(${sc_vip_list[*]})
+	else
+		sc_normal_list+=(${sc_normal_list[0]})
+		unset sc_normal_list[0]
+		sc_normal_list=(${sc_normal_list[*]})
+	fi
+	final_sc_list=(`echo ${sc_vip_list[*]} ${sc_normal_list[*]}`)
+	
         if [ $e -eq 1 ]; then
-            echo ${sc_list[*]:0}| awk '{for(i=1;i<=NF;i++) {if(i==NF) print $i;else printf $i"@"}}' > $fsr_file
+            echo ${final_sc_list[*]:0} | awk '{for(i=1;i<=NF;i++) {if(i==NF) print $i;else printf $i"@"}}' > $fsr_file
         else
-            echo ${sc_list[*]:0} | awk '{for(i=1;i<=NF;i++) {if(i==NF) print $i;else printf $i"@"}}' >> $fsr_file
+            echo ${final_sc_list[*]:0} | awk '{for(i=1;i<=NF;i++) {if(i==NF) print $i;else printf $i"@"}}' >> $fsr_file
         fi
     done
     if [ -n `echo "$JD_COOKIE" | grep "&"` ]; then
@@ -98,6 +111,7 @@ format_sc2txt(){
     else
 	JK_LIST=(`echo "$JD_COOKIE" | awk -F "$" '{for(i=1;i<=NF;i++){{if(length($i)!=0) print $i}}'`)
     fi
+    # 新账号第一次优先助力前面的账号
     if [ -n "$JK_LIST" ]; then
         diff=$((${#JK_LIST[*]}-${#sc_list[*]}))
         for e in `seq 1 $diff`
