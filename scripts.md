@@ -37,11 +37,6 @@ jd_crazy_joy_bonus.js
 ```
 jd_crazy_joy_coin.js
 ```
-* jd_cz.yml
-```
-jd_city.js
-jd_entertainment.js
-```
 * jd_factory.yml
 ```
 jd_dreamFactory.js
