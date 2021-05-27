@@ -35,8 +35,9 @@ jobs:
       - name: '运行 【星推官】'
         run: |
           bash ./concurrency_timer.sh jd_xtg.js
-          #bash ./run_scripts.sh jd_xtg.js &
-          bash ./run_scripts.sh jd_carnivalcity.js
+          jd_xtg_help
+          bash ./run_scripts.sh jd_xtg_help.js
+          #bash ./run_scripts.sh jd_carnivalcity.js
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
           JD_COOKIE: ${{ secrets.JD_COOKIE }}
