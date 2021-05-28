@@ -37,7 +37,7 @@ jobs:
           cp -f update_env.sh ~/update_env.sh && chmod 755 ~/update_env.sh && ~/update_env.sh
       - name: '运行 【超级直播间】'
         run: |
-          bash ./con_timer_by_min.sh jd_live_redrain.js 31
+          bash ./concurrency.sh jd_live_redrain.js 31
         env:
           JD_COOKIE: ${{ secrets.JD_COOKIE }}
           JD_DEBUG: ${{ secrets.JD_DEBUG }}
