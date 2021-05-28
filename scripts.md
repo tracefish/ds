@@ -111,6 +111,7 @@ jd_daily_lottery.js
 ```
 jd_sgmh.js
 jd_cash.js
+jd_gold_creator.js
 ```
 * jd_shy.yml
 ```
@@ -162,7 +163,7 @@ jd_unbind.js
 * jd_xtg.yml
 ```
 jd_xtg.js
-jd_carnivalcity.js
+jd_xtg_help.js
 ```
 * jx_cfd.yml
 ```
