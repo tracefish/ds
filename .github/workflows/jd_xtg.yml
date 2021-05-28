@@ -34,7 +34,7 @@ jobs:
           cp -f update_env.sh ~/update_env.sh && chmod 755 ~/update_env.sh && ~/update_env.sh
       - name: '运行 【星推官】'
         run: |
-          bash ./concurrency_timer.sh jd_xtg.js
+          bash ./concurrency.sh jd_xtg.js "00:00:00"
           bash ./run_scripts.sh jd_xtg_help.js
           bash ./concurrency.sh jd_xtg.js
         env:
