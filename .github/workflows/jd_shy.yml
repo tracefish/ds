@@ -37,7 +37,7 @@ jobs:
           cp -f update_env.sh ~/update_env.sh && chmod 755 ~/update_env.sh && ~/update_env.sh
       - name: '运行 【爱消除】'
         run: |
-          bash ./run_scripts.sh jd_jdaxc.js
+          bash ./concurrency.sh jd_jdaxc.js
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
           JD_COOKIE: ${{ secrets.JD_COOKIE }}
@@ -58,7 +58,7 @@ jobs:
           SYNCURL: "https://raw.githubusercontent.com/darkless456/jd-script/master/jd_jdaxc.js"
       - name: '运行 【消消乐】'
         run: |
-          bash ./run_scripts.sh jd_xxl_gh.js
+          bash ./concurrency.sh jd_xxl_gh.js
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
           JD_COOKIE: ${{ secrets.JD_COOKIE }}
