@@ -49,7 +49,11 @@ jobs:
           sed -i 's/indexOf("GITHUB")/indexOf("GOGOGOGO")/g' `ls -l |grep -v ^d|awk '{print $9}'`
           for script in ${scripts[*]}
           do
-            bash ./run_scripts.sh $script
+            if [ "$script" = "z_carnivalcity.js" ]; then
+              bash ./concurrency.sh $script
+            else
+              bash ./run_scripts.sh $script
+            fi
           done
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
