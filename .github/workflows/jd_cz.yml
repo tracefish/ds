@@ -41,8 +41,8 @@ jobs:
           # 脚本文件初始目录
           SCRIPT_DIR="${home}/scripts"
           git clone https://github.com/monk-coder/dust ${home}/dust
-          cp -Rf ${home}/dust/normal/* ${SCRIPT_DIR}/
-          scripts=(`ls ${home}/dust/normal`)
+          cp -Rf ${home}/dust/i-chenzhe/* ${SCRIPT_DIR}/
+          scripts=(`ls ${home}/dust/i-chenzhe`)
           cd ${SCRIPT_DIR}/
           echo "修改源码"
           sed -i "s/indexOf('GITHUB')/indexOf('GOGOGOGO')/g" `ls -l |grep -v ^d|awk '{print $9}'`
