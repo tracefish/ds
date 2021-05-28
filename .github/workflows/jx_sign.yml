@@ -49,7 +49,7 @@ jobs:
           IGOT_PUSH_KEY: ${{ secrets.IGOT_PUSH_KEY }}
       - name: '运行 【疯狂的Joy】'
         run: |
-          bash ./run_scripts.sh jd_crazy_joy.js
+          bash ./concurrency.sh jd_crazy_joy.js
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
           JD_COOKIE: ${{ secrets.JD_COOKIE }}
