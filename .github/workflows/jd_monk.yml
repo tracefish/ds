@@ -49,7 +49,7 @@ jobs:
           sed -i 's/indexOf("GITHUB")/indexOf("GOGOGOGO")/g' `ls -l |grep -v ^d|awk '{print $9}'`
           for script in ${scripts[*]}
           do
-            if [ "$script" = "monk_shop_lottery.js" ]; then
+            if [ "$script" = "monk_shop_lottery.js" -o "$script" = "adolf_star.js" ]; then
               bash ./concurrency.sh $script
             else
               bash ./run_scripts.sh $script
