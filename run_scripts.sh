@@ -161,7 +161,7 @@ main(){
 	echo "修改发送方式"
 	if [ -n "$DD_BOT_TOKEN_SPEC" -a -n "$DD_BOT_SECRET_SPEC" ]; then
 	#修改常规推送
-	cat > run_sendNotify.js <<EOF
+	cat > ./run_sendNotify.js <<EOF
 notify = require('./sendNotify');
 fs = require('fs');
 var data = fs.readFileSync('./${NOTIFY_CONF}');
@@ -170,7 +170,7 @@ var name = fs.readFileSync('./${NOTIFY_CONF}name');
 notify.sendNotify(name, data.toString());
 EOF
 	#修改特别推送
-	cat > run_sendNotify_spec.js <<EOT
+	cat > ./run_sendNotify_spec.js <<EOT
 notify = require('./sendNotify');
 fs = require('fs');
 var data = fs.readFileSync('./${NOTIFY_CONF}spec');
