@@ -54,4 +54,4 @@ jobs:
           IGOT_PUSH_KEY: ${{ secrets.IGOT_PUSH_KEY }}
           DDFACTORY_SHARECODES: ${{ secrets.DDFACTORY_SHARECODES }}
           FACTORAY_WANTPRODUCT_NAME: ${{ secrets.FACTORAY_WANTPRODUCT_NAME }}
-          JD_USER_AGENT: "jdapp;android;10.0.0;11;2643139303035683-6326533623539333;network/UNKNOWN;model/Redmi K20 Pro Premium Edition;addressid/0;aid/b41900e86b5c2593;oaid/a1ae016fae05d3c8;osVer/30;appBuild/86560;partner/xiaomi001;eufv/1;jdSupportDarkMode/0;Mozilla/5.0 (Linux; Android 11; Redmi K20 Pro Premium Edition Build/RKQ1.200826.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045513 Mobile Safari/537.36"
+          JD_USER_AGENT: "jdapp;iPhone;10.0.0;11.4;9ed0d69aaf190b5b4277868d2c0470fe1f787080;network/wifi;model/iPhone8,1;appBuild/100401;ADID/64199E21-4ECD-4217-BD79-0C4D82033FD8;supportApplePay/1;hasUPPay/0;pushNoticeIsOpen/1;hasOCPay/0;supportBestPay/0;session/73;pap/JA2019_3111789;brand/apple;supportJDSHWK/1;Mozilla/5.0 (iPhone; CPU iPhone OS 11_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15F79"
