@@ -61,6 +61,22 @@ modify_scripts(){
 	
 	echo "修改发送方式"
 	if [ -n "$DD_BOT_TOKEN_SPEC" -a -n "$DD_BOT_SECRET_SPEC" ]; then
+	#修改常规推送
+	cat > ./run_sendNotify.js <<EOF
+notify = require('./sendNotify');
+fs = require('fs');
+var data = fs.readFileSync('./${NOTIFY_CONF}');
+var name = fs.readFileSync('./${NOTIFY_CONF}name');
+notify.sendNotify(name, data.toString());
+EOF
+	#修改特别推送
+	cat > ./run_sendNotify_spec.js <<EOT
+notify = require('./sendNotify');
+fs = require('fs');
+var data = fs.readFileSync('./${NOTIFY_CONF}spec');
+var name = fs.readFileSync('./${NOTIFY_CONF}name');
+notify.sendNotify(name, data.toString());
+EOT
 	    cp -f ./sendNotify.js ./sendNotify_diy.js
 	    sed -i "s/desp += author/\/\/desp += author/g" ./sendNotify.js
 	    sed -i "/text = text.match/a   var fs = require('fs');fs.appendFile(\"./\" + \"${NOTIFY_CONF}name\", text + \"\\\n\", function(err) {if(err) {return console.log(err);}});fs.appendFile(\"./\" + \"${NOTIFY_CONF}\", desp + \"\\\n\", function(err) {if(err) {return console.log(err);}});\n  return" ./sendNotify.js
