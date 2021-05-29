@@ -40,7 +40,7 @@ jobs:
           home=`echo ~`
           # 脚本文件初始目录
           SCRIPT_DIR="${home}/scripts"
-          git clone https://github.com/monk-coder/dust ${home}/dust
+          git clone https://github.com/tracefish/dust ${home}/dust
           cp -Rf ${home}/dust/normal/* ${SCRIPT_DIR}/
           scripts=(`ls ${home}/dust/normal`)
           cd ${SCRIPT_DIR}/
