@@ -290,27 +290,29 @@ main(){
 
 	cd ${SCRIPT_DIR}
 	echo "推送消息"
-	if [ -n "$DD_BOT_TOKEN_SPEC" -a -n "$DD_BOT_SECRET_SPEC" ]; then
-		cp -f ./sendNotify_diy.js ./sendNotify.js
-		sed -i 's/text}\\n\\n/text}\\n/g' ./sendNotify.js
-		sed -i 's/\\n\\n本脚本/\\n本脚本/g' ./sendNotify.js
-		sed -i  "s/text = text.match/\/\/text = text.match/g" ./sendNotify.js
+	
+	cp -f ./sendNotify_diy.js ./sendNotify.js
+	sed -i 's/text}\\n\\n/text}\\n/g' ./sendNotify.js
+	sed -i 's/\\n\\n本脚本/\\n本脚本/g' ./sendNotify.js
+	sed -i  "s/text = text.match/\/\/text = text.match/g" ./sendNotify.js
 
-		if [ -e ${home}/${NOTIFY_CONF} -a -n "$(cat ${home}/${NOTIFY_CONF} | sed '/^$/d')" ]; then
-			blank_lines2blank_line ${home}/${NOTIFY_CONF}
-			blank_lines2blank_line ${home}/${NOTIFY_CONF}name
-			node ./run_sendNotify.js
-		fi
-		# 特殊推送
-		if [ -e ${home}/${NOTIFY_CONF}spec -a -n "$(cat ${home}/${NOTIFY_CONF}spec | sed '/^$/d')" ]; then
-			blank_lines2blank_line ${home}/${NOTIFY_CONF}spec
+	if [ -e ${home}/${NOTIFY_CONF} -a -n "$(cat ${home}/${NOTIFY_CONF} | sed '/^$/d')" ]; then
+		blank_lines2blank_line ${home}/${NOTIFY_CONF}
+		blank_lines2blank_line ${home}/${NOTIFY_CONF}name
+		node ./run_sendNotify.js
+	fi
+	# 特殊推送
+	if [ -e ${home}/${NOTIFY_CONF}spec -a -n "$(cat ${home}/${NOTIFY_CONF}spec | sed '/^$/d')" ]; then
+		blank_lines2blank_line ${home}/${NOTIFY_CONF}spec
+		if [ -n "$DD_BOT_TOKEN_SPEC" -a -n "$DD_BOT_SECRET_SPEC" ]; then
 			sed -i "s/process.env.DD_BOT_TOKEN/process.env.DD_BOT_TOKEN_SPEC/g" ./sendNotify.js
 			sed -i "s/process.env.DD_BOT_SECRET/process.env.DD_BOT_SECRET_SPEC/g" ./sendNotify.js
-			node ./run_sendNotify_spec.js
 		fi
-		# 恢复原文件
-		cp -f ./sendNotify_diy.js ./sendNotify.js
+		node ./run_sendNotify_spec.js
 	fi
+	# 恢复原文件
+	cp -f ./sendNotify_diy.js ./sendNotify.js
+
 	
 	upload_code "${SHCD_DIR}" ${home}/${LOG} ./${LOG}
 	
