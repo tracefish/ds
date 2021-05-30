@@ -65,16 +65,16 @@ modify_scripts(){
 	cat > ./run_sendNotify.js <<EOF
 notify = require('./sendNotify');
 fs = require('fs');
-var data = fs.readFileSync('./${NOTIFY_CONF}');
-var name = fs.readFileSync('./${NOTIFY_CONF}name');
+var data = fs.readFileSync('../${NOTIFY_CONF}');
+var name = fs.readFileSync('../${NOTIFY_CONF}name');
 notify.sendNotify(name, data.toString());
 EOF
 	#修改特别推送
 	cat > ./run_sendNotify_spec.js <<EOT
 notify = require('./sendNotify');
 fs = require('fs');
-var data = fs.readFileSync('./${NOTIFY_CONF}spec');
-var name = fs.readFileSync('./${NOTIFY_CONF}name');
+var data = fs.readFileSync('../${NOTIFY_CONF}spec');
+var name = fs.readFileSync('../${NOTIFY_CONF}name');
 notify.sendNotify(name, data.toString());
 EOT
 	    cp -f ./sendNotify.js ./sendNotify_diy.js
