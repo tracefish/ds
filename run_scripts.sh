@@ -1,5 +1,5 @@
 #!/bin/bash
-# Version: v2.5
+# Version: v2.51
 # 
 
 SCRIPT="$1"
@@ -186,7 +186,7 @@ notify.sendNotify(name, data.toString());
 EOT
 	    cp -f ./sendNotify.js ./sendNotify_diy.js
 	    sed -i "s/desp += author/\/\/desp += author/g" ./sendNotify.js
-	    sed -i "/text = text.match/a   var fs = require('fs');fs.appendFile(\"./\" + \"${NOTIFY_CONF}name\", text + \"\\\n\", function(err) {if(err) {return console.log(err);}});fs.exists("./55", function(exists) {if (exists) {fs.appendFile(\"./\" + \"${NOTIFY_CONF}spec_tmp\", desp + \"\\\n\", function(err) {if(err) {return console.log(err);}})} else {fs.appendFile(\"./\" + \"${NOTIFY_CONF}_tmp\", desp + \"\\\n\", function(err) {if(err) {return console.log(err);}})}});\n  return" ./sendNotify.js
+	    sed -i "/text = text.match/a   var fs = require('fs');fs.appendFile(\"./\" + \"${NOTIFY_CONF}name\", text + \"\\\n\", function(err) {if(err) {return console.log(err);}});fs.exists(\"${NOTIFY_CONF}name\", function(exists) {if (exists) {fs.appendFile(\"./\" + \"${NOTIFY_CONF}spec_tmp\", desp + \"\\\n\", function(err) {if(err) {return console.log(err);}})} else {fs.appendFile(\"./\" + \"${NOTIFY_CONF}_tmp\", desp + \"\\\n\", function(err) {if(err) {return console.log(err);}})}});\n  return" ./sendNotify.js
 	fi
 	
 	[ ! -e "./$SCRIPT" ] && echo "脚本不存在" && exit 0
