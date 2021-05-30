@@ -1,5 +1,5 @@
 #!/bin/bash
-# Version: v2.51
+# Version: v2.55
 # 
 
 SCRIPT="$1"
@@ -207,12 +207,12 @@ EOT
 	(node ./$SCRIPT | grep -Ev "pt_pin|pt_key") >&1 | tee ./${LOG}
 	
 	# 判断是否需要特别推送
-	if [ $(specify_send ./${NOTIFY_CONF}_tmp) -eq 0 ];then
-		mv ./${NOTIFY_CONF}_tmp ./${NOTIFY_CONF}
-		mv ./${NOTIFY_CONF}spec_tmp ./${NOTIFY_CONF}spec
+	if [ -e ./${NOTIFY_CONF}_tmp -a $(specify_send ./${NOTIFY_CONF}_tmp) -eq 0 ];then
+		[ -e ./${NOTIFY_CONF}_tmp ] && mv ./${NOTIFY_CONF}_tmp ./${NOTIFY_CONF}
+		[ -e ./${NOTIFY_CONF}spec_tmp ] && mv ./${NOTIFY_CONF}spec_tmp ./${NOTIFY_CONF}spec
 	else
-		mv ./${NOTIFY_CONF}spec_tmp ./${NOTIFY_CONF}
-		mv ./${NOTIFY_CONF}_tmp ./${NOTIFY_CONF}spec
+		[ -e ./${NOTIFY_CONF}spec_tmp ] && mv ./${NOTIFY_CONF}spec_tmp ./${NOTIFY_CONF}
+		[ -e ./${NOTIFY_CONF}_tmp ] && mv ./${NOTIFY_CONF}_tmp ./${NOTIFY_CONF}spec
 	fi
 
 
