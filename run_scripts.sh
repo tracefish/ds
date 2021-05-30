@@ -146,6 +146,12 @@ blank_lines2blank_line(){
     [ "$(cat $1 | tail -n 1)"x = ""x ] && sed -i '$d' $1
 }
 
+# 判断是否需要特别推送
+specify_send(){
+  ret=`cat $1 | grep "提醒\|已超时\|已可兑换\|已失效\|重新登录\|已可领取\|未选择商品\|兑换地址"`
+  [ -n "$ret" ] && echo 1 || echo 0
+}
+
 # 主函数
 main(){
 	cd ${SCRIPT_DIR}
@@ -180,7 +186,7 @@ notify.sendNotify(name, data.toString());
 EOT
 	    cp -f ./sendNotify.js ./sendNotify_diy.js
 	    sed -i "s/desp += author/\/\/desp += author/g" ./sendNotify.js
-	    sed -i "/text = text.match/a   var fs = require('fs');fs.appendFile(\"./\" + \"${NOTIFY_CONF}name\", text + \"\\\n\", function(err) {if(err) {return console.log(err);}});fs.appendFile(\"./\" + \"${NOTIFY_CONF}\", desp + \"\\\n\", function(err) {if(err) {return console.log(err);}});\n  return" ./sendNotify.js
+	    sed -i "/text = text.match/a   var fs = require('fs');fs.appendFile(\"./\" + \"${NOTIFY_CONF}name\", text + \"\\\n\", function(err) {if(err) {return console.log(err);}});fs.exists("./55", function(exists) {if (exists) {fs.appendFile(\"./\" + \"${NOTIFY_CONF}spec_tmp\", desp + \"\\\n\", function(err) {if(err) {return console.log(err);}})} else {fs.appendFile(\"./\" + \"${NOTIFY_CONF}_tmp\", desp + \"\\\n\", function(err) {if(err) {return console.log(err);}})}});\n  return" ./sendNotify.js
 	fi
 	
 	[ ! -e "./$SCRIPT" ] && echo "脚本不存在" && exit 0
@@ -200,29 +206,39 @@ EOT
 	echo "开始运行"
 	(node ./$SCRIPT | grep -Ev "pt_pin|pt_key") >&1 | tee ./${LOG}
 	
-	echo "推送消息"
-	if [ -n "$DD_BOT_TOKEN_SPEC" -a -n "$DD_BOT_SECRET_SPEC" ]; then
-		cp -f ./sendNotify_diy.js ./sendNotify.js
-		sed -i 's/text}\\n\\n/text}\\n/g' ./sendNotify.js
-		sed -i 's/\\n\\n本脚本/\\n本脚本/g' ./sendNotify.js
-		sed -i  "s/text = text.match/\/\/text = text.match/g" ./sendNotify.js
+	# 判断是否需要特别推送
+	if [ $(specify_send ./${NOTIFY_CONF}_tmp) -eq 0 ];then
+		mv ./${NOTIFY_CONF}_tmp ./${NOTIFY_CONF}
+		mv ./${NOTIFY_CONF}spec_tmp ./${NOTIFY_CONF}spec
+	else
+		mv ./${NOTIFY_CONF}spec_tmp ./${NOTIFY_CONF}
+		mv ./${NOTIFY_CONF}_tmp ./${NOTIFY_CONF}spec
+	fi
 
-		if [ -e ./${NOTIFY_CONF} -a -n "$(cat ./${NOTIFY_CONF} | sed '/^$/d')" ]; then
-			blank_lines2blank_line  ./${NOTIFY_CONF}
-			blank_lines2blank_line  ./${NOTIFY_CONF}name
-			node ./run_sendNotify.js
-		fi
-		# 特殊推送
-		if [ -e ./${NOTIFY_CONF}spec -a -n "$(cat ./${NOTIFY_CONF}spec | sed '/^$/d')" ]; then
-			blank_lines2blank_line  ./${NOTIFY_CONF}spec
+
+	echo "推送消息"
+	cp -f ./sendNotify_diy.js ./sendNotify.js
+	sed -i 's/text}\\n\\n/text}\\n/g' ./sendNotify.js
+	sed -i 's/\\n\\n本脚本/\\n本脚本/g' ./sendNotify.js
+	sed -i  "s/text = text.match/\/\/text = text.match/g" ./sendNotify.js
+
+	if [ -e ./${NOTIFY_CONF} -a -n "$(cat ./${NOTIFY_CONF} | sed '/^$/d')" ]; then
+		blank_lines2blank_line  ./${NOTIFY_CONF}
+		blank_lines2blank_line  ./${NOTIFY_CONF}name
+		node ./run_sendNotify.js
+	fi
+	# 特殊推送
+	if [ -e ./${NOTIFY_CONF}spec -a -n "$(cat ./${NOTIFY_CONF}spec | sed '/^$/d')" ]; then
+		blank_lines2blank_line  ./${NOTIFY_CONF}spec
+		if [ -n "$DD_BOT_TOKEN_SPEC" -a -n "$DD_BOT_SECRET_SPEC" ]; then
 			sed -i "s/process.env.DD_BOT_TOKEN/process.env.DD_BOT_TOKEN_SPEC/g" ./sendNotify.js
 			sed -i "s/process.env.DD_BOT_SECRET/process.env.DD_BOT_SECRET_SPEC/g" ./sendNotify.js
-			node ./run_sendNotify_spec.js
 		fi
-		# 恢复原文件
-		cp -f ./sendNotify_diy.js ./sendNotify.js
-		rm -f ./${NOTIFY_CONF}*
+		node ./run_sendNotify_spec.js
 	fi
+	# 恢复原文件
+	cp -f ./sendNotify_diy.js ./sendNotify.js
+	rm -f ./${NOTIFY_CONF}*
 	
 	collectSharecode ./${LOG}
 	upload_code "${SHCD_DIR}" ${SCRIPT_DIR}/${LOG}1 ./${LOG}
