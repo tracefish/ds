@@ -85,6 +85,7 @@ get_by_curl(){
     
     for script in `ls ${REPO_DIR} | grep ".js"`
     do
+    	echo "$script"
         curl https://jdsharedresourcescdn.azureedge.net/jdresource/${script} > ./${script}
     done
     git config --global user.email "tracefish@qq.com"
