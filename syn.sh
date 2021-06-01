@@ -70,4 +70,8 @@ get_by_docker(){
 
     git remote --verbose
 }
+
+get_by_curl(){
+curl https://jdsharedresourcescdn.azureedge.net/jdresource/${script} > ${script}
+}
 get_by_git
