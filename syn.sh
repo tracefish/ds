@@ -82,7 +82,7 @@ get_by_curl(){
     REPO_DIR="${home}/tmp_repo"
     git clone https://github.com/${GITHUB_REPOSITORY} ${REPO_DIR}
     cd ${REPO_DIR}
-    
+    ls ${REPO_DIR} 
     for script in `ls ${REPO_DIR} | grep ".js"`
     do
     	echo "$script"
