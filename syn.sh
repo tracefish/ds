@@ -80,7 +80,10 @@ get_by_docker(){
 get_by_curl(){
     home=`echo ~`
     REPO_DIR="${home}/tmp_repo"
-    git clone https://github.com/${GITHUB_REPOSITORY} ${REPO_DIR}
+    REPO_URL="https://github.com/${GITHUB_REPOSITORY}"
+    REPO_BRANCH=${DESTINATION_BRANCH}
+    git clone -b "$REPO_BRANCH" $REPO_URL ${REPO_DIR}
+
     cd ${REPO_DIR}
     ls ${REPO_DIR} 
     for script in `ls ${REPO_DIR} | grep ".js"`
