@@ -90,7 +90,7 @@ get_by_curl(){
     do
     	SCRIPT_URL="https://jdsharedresourcescdn.azureedge.net/jdresource/${script}"
 	status_code=`curl -I -m 10 -o /dev/null -s -w %{http_code} ${SCRIPT_URL}`
-	if [ "$status_code" == "200" ]; then
+	if [ "$status_code"x = "200"x ]; then
         	curl ${SCRIPT_URL} > ./${script}
 	fi
     done
