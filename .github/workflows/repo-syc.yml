@@ -22,7 +22,7 @@ jobs:
       - name: Pull image
         env:
           SOURCE_BRANCH: "master"
-          DESTINATION_BRANCH: "jd"
+          DESTINATION_BRANCH: "bak"
           REPO_URL: "git@gitee.com:lxk0301/jd_scripts.git"
           SOURCE_IMAGE: "lxk0301/jd_scripts"
           GITHUB_TOKEN: ${{ secrets.PAT }}
