@@ -88,8 +88,10 @@ get_by_curl(){
     ls ${REPO_DIR} 
     for script in `ls ${REPO_DIR} | grep ".js"`
     do
-    	echo "$script"
-        curl https://jdsharedresourcescdn.azureedge.net/jdresource/${script} > ./${script}
+    	SCRIPT_URL="https://jdsharedresourcescdn.azureedge.net/jdresource/${script}"
+    	if [ `cu-I -m 10 -o /dev/null -s -w %{http_code} ${SCRIPT_URL}` == "200" ]; then
+        	curl ${SCRIPT_URL} > ./${script}
+	fi
     done
     git config --global user.email "tracefish@qq.com"
     git config --global user.name "tracefish"
