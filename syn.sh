@@ -1,14 +1,18 @@
 #!/usr/bin/env sh
 
 set -e
-git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-git config --global user.name "github-actions[bot]"
-sudo git clone https://github.com/tracefish/ds ~/tmp_ds
-sudo mkdir ~/tmp_scripts/
-sudo mv -f ~/tmp_ds/*.sh ~/tmp_scripts/
-#sudo mv -f ~/tmp_ds/*.js ~/tmp_scripts/
+get_init(){
+    git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+    git config --global user.name "github-actions[bot]"
+    sudo git clone https://github.com/tracefish/ds ~/tmp_ds
+    sudo mkdir ~/tmp_scripts/
+    sudo mv -f ~/tmp_ds/*.sh ~/tmp_scripts/
+    #sudo mv -f ~/tmp_ds/*.js ~/tmp_scripts/
+}
 
 get_by_git(){
+    get_init
+    
     mkdir -p ~/jd_scripts/logs
     cp -f docker-compose.yml ~/jd_scripts/
     cd ~/jd_scripts/
@@ -39,6 +43,8 @@ get_by_git(){
 }
 
 get_by_docker(){
+    get_init
+
     docker rmi `docker images -q`
     echo "Get docker image"
     docker pull $SOURCE_IMAGE
