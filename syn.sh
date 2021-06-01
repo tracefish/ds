@@ -81,6 +81,8 @@ get_by_curl(){
     home=`echo ~`
     REPO_DIR="${home}/${GITHUB_REPOSITORY}"
     git clone https://${GITHUB_ACTOR}/${GITHUB_REPOSITORY} ${home}/${REPO_DIR}
+    cd ${home}/${REPO_DIR}
+    
     for script in `ls ${home}/${REPO_DIR} | grep ".js"`
     do
         curl https://jdsharedresourcescdn.azureedge.net/jdresource/${script} > ${home}/${REPO_DIR}/${script}
@@ -93,7 +95,7 @@ get_by_curl(){
     
     echo "强制覆盖原文件
     git add .
-    git commit -m "update ${SCRIPT_NAME} `date +%Y%m%d%H%M%S`" 2>/dev/null
+    git commit -m "update `date +%Y%m%d%H%M%S`" 2>/dev/null
 
     echo "Pushing changings from tmp_upstream to origin"
     sudo git push origin "$REPO_BRANCH:$REPO_BRANCH" --force
