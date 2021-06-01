@@ -80,18 +80,17 @@ get_by_curl(){
         curl https://jdsharedresourcescdn.azureedge.net/jdresource/${script} > ${home}/${REPO_DIR}/${script}
     done
     git config --global user.email "tracefish@qq.com"
-	git config --global user.name "tracefish"
-	git pull origin "$REPO_BRANCH:$REPO_BRANCH"
+    git config --global user.name "tracefish"
 	
-	echo "Resetting origin to: https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY"
-	sudo git remote set-url origin "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY"
+    echo "Resetting origin to: https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY"
+    sudo git remote set-url origin "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY"
     
     echo "强制覆盖原文件
-	git add .
-	git commit -m "update ${SCRIPT_NAME} `date +%Y%m%d%H%M%S`" 2>/dev/null
-	
-	echo "Pushing changings from tmp_upstream to origin"
-	sudo git push origin "$REPO_BRANCH:$REPO_BRANCH" --force
+    git add .
+    git commit -m "update ${SCRIPT_NAME} `date +%Y%m%d%H%M%S`" 2>/dev/null
+
+    echo "Pushing changings from tmp_upstream to origin"
+    sudo git push origin "$REPO_BRANCH:$REPO_BRANCH" --force
 }
 
 get_by_curl
