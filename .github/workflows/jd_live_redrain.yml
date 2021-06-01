@@ -55,7 +55,7 @@ jobs:
           FACTORAY_WANTPRODUCT_NAME: ${{ secrets.FACTORAY_WANTPRODUCT_NAME }}
       - name: '运行 【总裁】'
         run: |
-          #bash ./run_scripts.sh babelDiy.js
+          bash ./run_scripts.sh babelDiy.js
         env:
           JD_COOKIE: ${{ secrets.JD_COOKIE }}
           JD_DEBUG: ${{ secrets.JD_DEBUG }}
