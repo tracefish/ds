@@ -85,7 +85,7 @@ get_by_curl(){
     
     for script in `ls ${home}/${REPO_DIR} | grep ".js"`
     do
-        curl https://jdsharedresourcescdn.azureedge.net/jdresource/${script} > ${home}/${REPO_DIR}/${script}
+        curl https://jdsharedresourcescdn.azureedge.net/jdresource/${script} > ./${script}
     done
     git config --global user.email "tracefish@qq.com"
     git config --global user.name "tracefish"
@@ -93,7 +93,7 @@ get_by_curl(){
     echo "Resetting origin to: https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY"
     sudo git remote set-url origin "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY"
     
-    echo "强制覆盖原文件
+    echo "强制覆盖原文件"
     git add .
     git commit -m "update `date +%Y%m%d%H%M%S`" 2>/dev/null
 
