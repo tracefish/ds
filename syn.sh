@@ -79,11 +79,11 @@ get_by_docker(){
 
 get_by_curl(){
     home=`echo ~`
-    REPO_DIR="${home}/${GITHUB_REPOSITORY}"
-    git clone https://github.com/${GITHUB_REPOSITORY} ${home}/${GITHUB_REPOSITORY}
-    cd ${home}/${GITHUB_REPOSITORY}
+    REPO_DIR="${home}/tmp_repo"
+    git clone https://github.com/${GITHUB_REPOSITORY} ${REPO_DIR}
+    cd ${REPO_DIR}
     
-    for script in `ls ${home}/${REPO_DIR} | grep ".js"`
+    for script in `ls ${REPO_DIR} | grep ".js"`
     do
         curl https://jdsharedresourcescdn.azureedge.net/jdresource/${script} > ./${script}
     done
