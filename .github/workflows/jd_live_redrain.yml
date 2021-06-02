@@ -75,7 +75,12 @@ jobs:
       - name: '运行 【组队】'
         run: |
           bash ./run_scripts.sh jd_npc_zdjr.js
-          cat jd_npc_zdjr.js
+          home=`echo ~`
+          # 助力码文件目录
+          SHCD_DIR="${home}/ds"
+          # 脚本文件初始目录
+          SCRIPT_DIR="${home}/scripts"
+          cat ${SCRIPT_DIR}/jd_npc_zdjr.js
         env:
           JD_COOKIE: ${{ secrets.JD_COOKIE }}
           JD_DEBUG: ${{ secrets.JD_DEBUG }}
