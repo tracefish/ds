@@ -37,7 +37,7 @@ jobs:
           cp -f update_env.sh ~/update_env.sh && chmod 755 ~/update_env.sh && ~/update_env.sh
       - name: '运行 【超级直播间】'
         run: |
-          bash ./concurrency.sh jd_live_redrain.js 31
+          #bash ./concurrency.sh jd_live_redrain.js 31
         env:
           JD_COOKIE: ${{ secrets.JD_COOKIE }}
           JD_DEBUG: ${{ secrets.JD_DEBUG }}
@@ -55,7 +55,7 @@ jobs:
           FACTORAY_WANTPRODUCT_NAME: ${{ secrets.FACTORAY_WANTPRODUCT_NAME }}
       - name: '运行 【总裁】'
         run: |
-          bash ./run_scripts.sh babelDiy.js
+          #bash ./run_scripts.sh babelDiy.js
         env:
           JD_COOKIE: ${{ secrets.JD_COOKIE }}
           JD_DEBUG: ${{ secrets.JD_DEBUG }}
@@ -75,6 +75,7 @@ jobs:
       - name: '运行 【组队】'
         run: |
           bash ./run_scripts.sh jd_npc_zdjr.js
+          cat jd_npc_zdjr.js
         env:
           JD_COOKIE: ${{ secrets.JD_COOKIE }}
           JD_DEBUG: ${{ secrets.JD_DEBUG }}
