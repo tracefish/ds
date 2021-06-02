@@ -1,5 +1,5 @@
 #!/bin/bash
-# Version: v2.5
+# Version: v2.60
 # 
 
 SCRIPT="$1"
@@ -186,7 +186,7 @@ notify.sendNotify(name, data.toString());
 EOT
 	    cp -f ./sendNotify.js ./sendNotify_diy.js
 	    sed -i "s/desp += author/\/\/desp += author/g" ./sendNotify.js
-	    sed -i "/text = text.match/a   var fs = require('fs');fs.appendFile(\"./\" + \"${NOTIFY_CONF}name\", text + \"\\\n\", function(err) {if(err) {return console.log(err);}});fs.exists(\"${NOTIFY_CONF}\", function(exists) {if (exists) {fs.appendFile(\"./\" + \"${NOTIFY_CONF}spec_tmp\", desp + \"\\\n\", function(err) {if(err) {return console.log(err);}})} else {fs.appendFile(\"./\" + \"${NOTIFY_CONF}_tmp\", desp + \"\\\n\", function(err) {if(err) {return console.log(err);}})}});\n  return" ./sendNotify.js
+	    sed -i "/text = text.match/a   var fs = require('fs');fs.appendFile(\"./\" + \"${NOTIFY_CONF}name\", text + \"\\\n\", function(err) {if(err) {return console.log(err);}});fs.exists(\"${NOTIFY_CONF}name\", function(exists) {if (exists) {fs.appendFile(\"./\" + \"${NOTIFY_CONF}spec_tmp\", desp + \"\\\n\", function(err) {if(err) {return console.log(err);}})} else {fs.appendFile(\"./\" + \"${NOTIFY_CONF}_tmp\", desp + \"\\\n\", function(err) {if(err) {return console.log(err);}})}});\n  return" ./sendNotify.js
 	fi
 	
 	[ ! -e "./$SCRIPT" ] && echo "脚本不存在" && exit 0
@@ -195,6 +195,8 @@ EOT
 	[ -e "${SHCD_DIR}/${SCRIPT_NAME}.log" ] && autoHelp "${SCRIPT}" "${SHCD_DIR}/${SCRIPT_NAME}.log"
 
 	echo "DECODE"
+	sed -i "s/indexOf('GITHUB')/indexOf('GOGOGOGO')/g" ./$SCRIPT
+	sed -i 's/indexOf("GITHUB")/indexOf("GOGOGOGO")/g' ./$SCRIPT
 	encode_str=(`cat ./${SCRIPT} | grep "window" | awk -F "window" '{print($1)}'| awk -F "var " '{print $(NF-1)}' | awk -F "=" '{print $1}' | sort -u`)
 	if [ -n "$encode_str" ]; then
 		for ec in ${encode_str[*]}
@@ -207,12 +209,12 @@ EOT
 	(node ./$SCRIPT | grep -Ev "pt_pin|pt_key") >&1 | tee ./${LOG}
 	
 	# 判断是否需要特别推送
-	if [ $(specify_send ./${NOTIFY_CONF}_tmp) -eq 0 ];then
-		mv ./${NOTIFY_CONF}_tmp ./${NOTIFY_CONF}
-		mv ./${NOTIFY_CONF}spec_tmp ./${NOTIFY_CONF}spec
+	if [ -e ./${NOTIFY_CONF}_tmp -a $(specify_send ./${NOTIFY_CONF}_tmp) -eq 0 ];then
+		[ -e ./${NOTIFY_CONF}_tmp ] && mv ./${NOTIFY_CONF}_tmp ./${NOTIFY_CONF}
+		[ -e ./${NOTIFY_CONF}spec_tmp ] && mv ./${NOTIFY_CONF}spec_tmp ./${NOTIFY_CONF}spec
 	else
-		mv ./${NOTIFY_CONF}spec_tmp ./${NOTIFY_CONF}
-		mv ./${NOTIFY_CONF}_tmp ./${NOTIFY_CONF}spec
+		[ -e ./${NOTIFY_CONF}spec_tmp ] && mv ./${NOTIFY_CONF}spec_tmp ./${NOTIFY_CONF}
+		[ -e ./${NOTIFY_CONF}_tmp ] && mv ./${NOTIFY_CONF}_tmp ./${NOTIFY_CONF}spec
 	fi
 
 
