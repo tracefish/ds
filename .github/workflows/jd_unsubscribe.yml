@@ -70,4 +70,4 @@ jobs:
           DD_BOT_TOKEN_SPEC: ${{ secrets.DD_BOT_TOKEN_SPEC }}
           DD_BOT_SECRET_SPEC: ${{ secrets.DD_BOT_SECRET_SPEC }}
           IGOT_PUSH_KEY: ${{ secrets.IGOT_PUSH_KEY }}
-          SYNURL: "https://raw.githubusercontent.com/tracefish/ds/jd/activity/jd_unbind.js"
+          SYNCURL: "https://raw.githubusercontent.com/tracefish/ds/jd/activity/jd_unbind.js"
