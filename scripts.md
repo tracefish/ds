@@ -76,6 +76,7 @@ jd_jxd.js
 * jd_live_redrain.yml
 ```
 jd_live_redrain.js
+jd_npc_zdjr.js
 ```
 * jd_mohe.yml
 ```
