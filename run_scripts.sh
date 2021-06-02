@@ -1,5 +1,5 @@
 #!/bin/bash
-# Version: v2.60
+# Version: v2.61
 # 
 
 SCRIPT="$1"
@@ -148,7 +148,7 @@ blank_lines2blank_line(){
 
 # 判断是否需要特别推送
 specify_send(){
-  ret=`cat $1 | grep "提醒\|已超时\|已可兑换\|已失效\|重新登录\|已可领取\|未选择商品\|兑换地址"`
+  ret=`cat $1 | grep "提醒\|已超时\|已可兑换\|已失效\|重新登录\|已可领取\|未选择商品\|兑换地址\|未继续领养"`
   [ -n "$ret" ] && echo 1 || echo 0
 }
 
