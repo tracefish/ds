@@ -1,5 +1,5 @@
 #!/bin/bash
-# Version: v2.55
+# Version: v2.60
 # 
 
 SCRIPT="$1"
@@ -195,6 +195,8 @@ EOT
 	[ -e "${SHCD_DIR}/${SCRIPT_NAME}.log" ] && autoHelp "${SCRIPT}" "${SHCD_DIR}/${SCRIPT_NAME}.log"
 
 	echo "DECODE"
+	sed -i "s/indexOf('GITHUB')/indexOf('GOGOGOGO')/g" ./$SCRIPT
+	sed -i 's/indexOf("GITHUB")/indexOf("GOGOGOGO")/g' ./$SCRIPT
 	encode_str=(`cat ./${SCRIPT} | grep "window" | awk -F "window" '{print($1)}'| awk -F "var " '{print $(NF-1)}' | awk -F "=" '{print $1}' | sort -u`)
 	if [ -n "$encode_str" ]; then
 		for ec in ${encode_str[*]}
