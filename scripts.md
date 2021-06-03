@@ -88,6 +88,8 @@ jd_carnivalcity.js
 jd_necklace.js
 jd_small_home.js
 jd_health.js
+jd_party_night.js
+jd_star_shop.js
 ```
 * jd_nzmh.yml
 ```
