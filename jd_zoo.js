@@ -35,9 +35,15 @@ const pKHelpAuthorFlag = true;//是否助力作者PK  true 助力，false 不助
 let cookiesArr = [];
 $.cookie = '';
 $.inviteList = [];
-$.pkInviteList = [];
+$.pkInviteList = [
+];
 $.secretpInfo = {};
 $.innerPkInviteList = [
+  "sSKNX-MpqKOJsNu8mJ7RA9BJMup4tAAmPcPPPhBUWYKUJ19UKeC8EAoKeUXELi4s",
+  'sSKNX-MpqKPS7Le4m5rbBpODDLhoZ9ruJViTqJpv4c2Lm2-TfJwzRBS82zBEzkXI',
+  'sSKNX-MpqKOJsNvSzMSZfAM9H7GwE_7GAGP6h5-yWMFC6rsV_bSQHlBmw28ArA',
+  'sSKNX-MpqKOJsNvM-u2vdyHH5x3rrYdCxJ-sE_oy8C69xCinRiEdQ3bib4w42A',
+  'sSKNX-MpqKOJsNu-ms-IVdCm3z528hK5o2UJgQWu0nCM-DsOo6H6pwAnkox1F2YM'
 ];
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
@@ -206,24 +212,25 @@ async function zoo() {
             await $.wait(3000);
           }
         }
-      }else if ($.oneTask.taskType === 2 && $.oneTask.status === 1){
-        console.log(`做任务：${$.oneTask.taskName};等待完成 (实际不会添加到购物车)`);
-        $.taskId = $.oneTask.taskId;
-        $.feedDetailInfo = {};
-        await takePostRequest('zoo_getFeedDetail');
-        let productList = $.feedDetailInfo.productInfoVos;
-        let needTime = Number($.feedDetailInfo.maxTimes) - Number($.feedDetailInfo.times);
-        for (let j = 0; j < productList.length && needTime > 0; j++) {
-          if(productList[j].status !== 1){
-            continue;
-          }
-          $.taskToken = productList[j].taskToken;
-          console.log(`加购：${productList[j].skuName}`);
-          await takePostRequest('add_car');
-          await $.wait(1500);
-          needTime --;
-        }
       }
+      // else if ($.oneTask.taskType === 2 && $.oneTask.status === 1){
+      //   console.log(`做任务：${$.oneTask.taskName};等待完成 (实际不会添加到购物车)`);
+      //   $.taskId = $.oneTask.taskId;
+      //   $.feedDetailInfo = {};
+      //   await takePostRequest('zoo_getFeedDetail');
+      //   let productList = $.feedDetailInfo.productInfoVos;
+      //   let needTime = Number($.feedDetailInfo.maxTimes) - Number($.feedDetailInfo.times);
+      //   for (let j = 0; j < productList.length && needTime > 0; j++) {
+      //     if(productList[j].status !== 1){
+      //       continue;
+      //     }
+      //     $.taskToken = productList[j].taskToken;
+      //     console.log(`加购：${productList[j].skuName}`);
+      //     await takePostRequest('add_car');
+      //     await $.wait(1500);
+      //     needTime --;
+      //   }
+      // }
     }
     await $.wait(1000);
     await takePostRequest('zoo_getHomeData');
