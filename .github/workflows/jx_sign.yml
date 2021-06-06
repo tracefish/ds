@@ -67,3 +67,43 @@ jobs:
           JDJOY_HELPSELF: ${{ secrets.JDJOY_HELPSELF }}
           JDJOY_APPLYJDBEAN: ${{ secrets.JDJOY_APPLYJDBEAN || 2000 }}
           JDJOY_SHARECODES: ${{ secrets.JDJOY_SHARECODES }}
+      - name: '运行 【新潮品牌狂欢】'
+        run: |
+          bash ./concurrency.sh jd_mcxhd.js.js
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
+          JD_COOKIE: ${{ secrets.JD_COOKIE }}
+          JD_DEBUG: ${{ secrets.JD_DEBUG }}
+          PUSH_KEY: ${{ secrets.PUSH_KEY }}
+          BARK_PUSH: ${{ secrets.BARK_PUSH }}
+          BARK_SOUND: ${{ secrets.BARK_SOUND }}
+          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+          TG_USER_ID: ${{ secrets.TG_USER_ID }}
+          DD_BOT_TOKEN: ${{ secrets.DD_BOT_TOKEN }}
+          DD_BOT_SECRET: ${{ secrets.DD_BOT_SECRET }}
+          DD_BOT_TOKEN_SPEC: ${{ secrets.DD_BOT_TOKEN_SPEC }}
+          DD_BOT_SECRET_SPEC: ${{ secrets.DD_BOT_SECRET_SPEC }}
+          IGOT_PUSH_KEY: ${{ secrets.IGOT_PUSH_KEY }}
+          JDJOY_HELPSELF: ${{ secrets.JDJOY_HELPSELF }}
+          JDJOY_APPLYJDBEAN: ${{ secrets.JDJOY_APPLYJDBEAN || 2000 }}
+          JDJOY_SHARECODES: ${{ secrets.JDJOY_SHARECODES }}
+      - name: '运行 【京喜领88元红包】'
+        run: |
+          bash ./run_scripts.sh jd_jxlhb.js
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
+          JD_COOKIE: ${{ secrets.JD_COOKIE }}
+          JD_DEBUG: ${{ secrets.JD_DEBUG }}
+          PUSH_KEY: ${{ secrets.PUSH_KEY }}
+          BARK_PUSH: ${{ secrets.BARK_PUSH }}
+          BARK_SOUND: ${{ secrets.BARK_SOUND }}
+          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+          TG_USER_ID: ${{ secrets.TG_USER_ID }}
+          DD_BOT_TOKEN: ${{ secrets.DD_BOT_TOKEN }}
+          DD_BOT_SECRET: ${{ secrets.DD_BOT_SECRET }}
+          DD_BOT_TOKEN_SPEC: ${{ secrets.DD_BOT_TOKEN_SPEC }}
+          DD_BOT_SECRET_SPEC: ${{ secrets.DD_BOT_SECRET_SPEC }}
+          IGOT_PUSH_KEY: ${{ secrets.IGOT_PUSH_KEY }}
+          JDJOY_HELPSELF: ${{ secrets.JDJOY_HELPSELF }}
+          JDJOY_APPLYJDBEAN: ${{ secrets.JDJOY_APPLYJDBEAN || 2000 }}
+          JDJOY_SHARECODES: ${{ secrets.JDJOY_SHARECODES }}
