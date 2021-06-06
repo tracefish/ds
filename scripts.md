@@ -140,6 +140,7 @@ jd_superMarket.js
 jd_health_collect.js
 jd_jump.js
 jd_zoo.js
+jd_big_winner.js
 ```
 * jd_syj.yml
 ```
@@ -176,6 +177,8 @@ jd_cfd.js
 ```
 jx_sign.js
 jd_crazy_joy.js
+jd_mcxhd.js
+jd_jxlhb.js
 ```
 * test.yml
 ```
