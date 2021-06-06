@@ -69,7 +69,7 @@ jobs:
           JDJOY_SHARECODES: ${{ secrets.JDJOY_SHARECODES }}
       - name: '运行 【新潮品牌狂欢】'
         run: |
-          bash ./concurrency.sh jd_mcxhd.js.js
+          bash ./concurrency.sh jd_mcxhd.js
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
           JD_COOKIE: ${{ secrets.JD_COOKIE }}
