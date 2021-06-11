@@ -1,6 +1,6 @@
 #!/bin/bash
-# Version: v2.61
-# 
+# Version: v3.0
+# 青龙面板task重写
 
 SCRIPT="$1"
 # VIP人数，默认前面的人
@@ -8,16 +8,12 @@ VIPS="10"
 SCRIPT_NAME=`echo "${1}" | awk -F "." '{print $1}'`
 LOG="${SCRIPT_NAME}.log"
 NOTIFY_CONF="dt.conf"
-REPO_URL="https://github.com/tracefish/ds"
-REPO_BRANCH="sc"
 # 防止action抽风，加双引号不能输出home目录
 home=`echo ~`
 # 助力码文件目录
 SHCD_DIR="${home}/ds"
 # 脚本文件初始目录
 SCRIPT_DIR="${home}/scripts"
-
-[ ! -d ${SHCD_DIR} ] && git clone -b "$REPO_BRANCH" $REPO_URL ${SHCD_DIR}
 
 # 格式化助力码
 autoHelp(){
@@ -113,26 +109,8 @@ collectSharecode(){
 upload_code(){
 # $1：克隆仓库目录
 # $2：助力码文件
-# $3：仓库本地助力码文件
-	[ ! -e $2 -o -z "$GITHUB_TOKEN" ] && echo "退出脚本" && exit 0
-
-	echo "上传助力码文件"
-	cd $1
-	echo "拉取最新源码"
-	git config --global user.email "tracefish@qq.com"
-	git config --global user.name "tracefish"
-	git pull origin "$REPO_BRANCH:$REPO_BRANCH"
-	
-	echo "Resetting origin to: https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY"
-	sudo git remote set-url origin "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY"
-	
-	echo "强制覆盖原文件"
+	echo "更新助力码"
 	mv -v $2 $3
-	git add .
-	git commit -m "update ${SCRIPT_NAME} `date +%Y%m%d%H%M%S`" 2>/dev/null
-	
-	echo "Pushing changings from tmp_upstream to origin"
-	sudo git push origin "$REPO_BRANCH:$REPO_BRANCH" --force
 }
 
 # 清除连续空行为一行和首尾空行
@@ -155,14 +133,9 @@ specify_send(){
 # 主函数
 main(){
 	cd ${SCRIPT_DIR}
-
-	if [ -n "$SYNCURL" ]; then
-		echo "下载脚本"
-		curl "$SYNCURL" > "./$SCRIPT"
-		# 外链脚本替换
-		sed -i "s/indexOf('GITHUB')/indexOf('GOGOGOGO')/g" `ls -l |grep -v ^d|awk '{print $9}'`
-		sed -i 's/indexOf("GITHUB")/indexOf("GOGOGOGO")/g' `ls -l |grep -v ^d|awk '{print $9}'`
-	fi
+	
+	# 备份
+	cp -f ./${SCRIPT} ./${SCRIPT}.bak
 	
 	echo "修改发送方式"
 	if [ -n "$DD_BOT_TOKEN_SPEC" -a -n "$DD_BOT_SECRET_SPEC" ]; then
@@ -193,17 +166,6 @@ EOT
 
 	echo "替换助力码"
 	[ -e "${SHCD_DIR}/${SCRIPT_NAME}.log" ] && autoHelp "${SCRIPT}" "${SHCD_DIR}/${SCRIPT_NAME}.log"
-
-	echo "DECODE"
-	sed -i "s/indexOf('GITHUB')/indexOf('GOGOGOGO')/g" ./$SCRIPT
-	sed -i 's/indexOf("GITHUB")/indexOf("GOGOGOGO")/g' ./$SCRIPT
-	encode_str=(`cat ./${SCRIPT} | grep "window" | awk -F "window" '{print($1)}'| awk -F "var " '{print $(NF-1)}' | awk -F "=" '{print $1}' | sort -u`)
-	if [ -n "$encode_str" ]; then
-		for ec in ${encode_str[*]}
-		do
-			sed -i "s/return $ec/if($ec.toLowerCase()==\"github\"){$ec=\"GOGOGOGO\"};return $ec/g" ./$SCRIPT
-		done
-	fi
 
 	echo "开始运行"
 	(node ./$SCRIPT | grep -Ev "pt_pin|pt_key") >&1 | tee ./${LOG}
@@ -240,7 +202,9 @@ EOT
 	fi
 	# 恢复原文件
 	cp -f ./sendNotify_diy.js ./sendNotify.js
+	cp -f ./${SCRIPT}.bak ./${SCRIPT}
 	rm -f ./${NOTIFY_CONF}*
+	rm -f ./${SCRIPT}.bak
 	
 	collectSharecode ./${LOG}
 	upload_code "${SHCD_DIR}" ${SCRIPT_DIR}/${LOG}1 ./${LOG}
