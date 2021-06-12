@@ -1,5 +1,5 @@
 #!/bin/bash
-# Version: v3.10
+# Version: v3.11
 # 青龙面板task重写
 
 ## 导入通用变量与函数
@@ -166,7 +166,7 @@ EOT
 	[ -e "${SHCD_DIR}/${SCRIPT_NAME}.log" ] && autoHelp "${SCRIPT}" "${SHCD_DIR}/${SCRIPT_NAME}.log"
 
 	log_time=$(date "+%Y-%m-%d-%H-%M-%S")
-	log_dir_tmp="${p1##*/}"
+	log_dir_tmp="${SCRIPT##*/}"
 	log_dir="$dir_log/${log_dir_tmp%%.*}"
     	log_path="$log_dir/$log_time.log"
     	make_dir "$log_dir"
