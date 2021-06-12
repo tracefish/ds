@@ -1,6 +1,10 @@
 #!/bin/bash
-# Version: v3.0
+# Version: v3.10
 # 青龙面板task重写
+
+## 导入通用变量与函数
+dir_shell=/ql/shell
+. $dir_shell/share.sh
 
 SCRIPT="$1"
 # VIP人数，默认前面的人
@@ -9,9 +13,10 @@ SCRIPT_NAME=`echo "${1}" | awk -F "." '{print $1}'`
 LOG="${SCRIPT_NAME}.log"
 NOTIFY_CONF="dt.conf"
 # 防止action抽风，加双引号不能输出home目录
-home=`echo ~`
+home="/ql"
 # 助力码文件目录
-SHCD_DIR="${home}/ds"
+SHCD_DIR="${home}/sharecode"
+[ ! -d ${SHCD_DIR} ] && mkdir ${SHCD_DIR}
 # 脚本文件初始目录
 SCRIPT_DIR="${home}/scripts"
 
@@ -99,18 +104,11 @@ collectSharecode(){
         [ -z "$code" ] && exit 0
         for i in `seq 0 $((${#name[*]}-1))`
         do 
-            [ -n "${code[i]}" ] && echo "${name[i]}""${code[i]}" >> ./${LOG}1
+            [ -n "${code[i]}" ] && echo "${name[i]}""${code[i]}" >> ${SHCD_DIR}/${LOG}
         done
     else
-        echo $code | awk '{for(i=1;i<=NF;i++)print $i}' > ./${LOG}1
+        echo $code | awk '{for(i=1;i<=NF;i++)print $i}' > ${SHCD_DIR}/${LOG}
     fi
-}
-
-upload_code(){
-# $1：克隆仓库目录
-# $2：助力码文件
-	echo "更新助力码"
-	mv -v $2 $3
 }
 
 # 清除连续空行为一行和首尾空行
@@ -167,8 +165,14 @@ EOT
 	echo "替换助力码"
 	[ -e "${SHCD_DIR}/${SCRIPT_NAME}.log" ] && autoHelp "${SCRIPT}" "${SHCD_DIR}/${SCRIPT_NAME}.log"
 
+	log_time=$(date "+%Y-%m-%d-%H-%M-%S")
+	log_dir_tmp="${p1##*/}"
+	log_dir="$dir_log/${log_dir_tmp%%.*}"
+    	log_path="$log_dir/$log_time.log"
+    	make_dir "$log_dir"
+    
 	echo "开始运行"
-	(node ./$SCRIPT | grep -Ev "pt_pin|pt_key") >&1 | tee ./${LOG}
+	(node ./$SCRIPT | grep -Ev "pt_pin|pt_key") >&1 | tee ./${log_path}
 	
 	# 判断是否需要特别推送
 	if [ -e ./${NOTIFY_CONF}_tmp -a $(specify_send ./${NOTIFY_CONF}_tmp) -eq 0 ];then
@@ -206,7 +210,6 @@ EOT
 	rm -f ./${NOTIFY_CONF}*
 	rm -f ./${SCRIPT}.bak
 	
-	collectSharecode ./${LOG}
-	upload_code "${SHCD_DIR}" ${SCRIPT_DIR}/${LOG}1 ./${LOG}
+	collectSharecode ${log_path}
 }
 main
