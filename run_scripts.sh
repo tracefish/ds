@@ -1,12 +1,14 @@
 #!/bin/bash
-# Version: v3.11
+# Version: v3.12
 # 青龙面板task重写
 
 ## 导入通用变量与函数
 dir_shell=/ql/shell
 . $dir_shell/share.sh
 
-SCRIPT="$1"
+SCRIPT="$2"
+
+[ "$1" == "python3" ] && $1 $2 && exit 0
 # VIP人数，默认前面的人
 VIPS="10"
 SCRIPT_NAME=`echo "${1}" | awk -F "." '{print $1}'`
